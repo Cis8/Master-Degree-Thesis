@@ -1,0 +1,60 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Study case: AWS EC2 resource generation with Pulumi}
+\label{cap:case-study}
+%**************************************************************
+
+\intro{Generation of AWS EC2 resources with Pulumi to compare how various languages supported by Pulumi will differ in the infrastructure resources declaration}\\
+
+%**************************************************************
+\section{Amazon Web Services}
+AWS is a wide collection of services with many different purposes and characteristics including compute, storage, databases, analytics, networking, mobile, developer tools, management tools, IoT, security, and enterprise applications: on-demand, available in seconds, with pay-as-you-go pricing.
+Anyway, for the purpose of the thesis we'll focus only on the EC2 module.
+
+\subsection{AWS's EC2 module}
+EC2 provides scalable computing capacity in the Amazon Web Services (AWS) Cloud.
+Amazon EC2 eliminates the need to invest in hardware up front, so that the development and deployment of the applications is faster.
+Such a characteristics is a perfect fit for an IaC scenario.
+
+\section{Case study infrastructure overview}
+For the thesis, only few components of the vast EC2 module have been selected to create a working infrastructure.\\
+The infrastructure
+
+\subsection{Components of the infrastructure}
+
+\subsubsection{VPC}
+
+\subsubsection{Subnet}
+
+\subsubsection{InternetGateway}
+
+\subsubsection{RouteTable}
+
+\section{Typescript implementation of the case study}
+
+\section{Java implementation of the case study}
+
+\section{My Scala implementation of the case study}
+
+\subsection{Syntactic sugar}
+
+\subsubsection{Syntactic sugar for the builders}
+
+\subsubsection{Syntactic sugar for the constructors of the resources}
+
+\subsubsection{Functor and Monads for the Output type}
+
+\subsubsection{Usage of the syntactic sugar}
+
+\subsection{Automatic code generation for the syntactic sugar}
+
+\subsubsection{What Pulumi asks for the official support of a new Language}
+
+\subsubsection{Raw automatic code generation with JavaParser}
+
+\subsubsection{Usage of the generated code as a library}
+
+\subsubsection{Possible future improvements for the code generation with Scalameta}

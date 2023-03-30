@@ -19,13 +19,42 @@ It seamlessly integrates features of object-oriented and functional languages.
 Scala is a pure object-oriented language in the sense that every value is an object. Types and behaviors of objects are described by classes and traits.
 Classes can be extended by subclassing, and by using a flexible \gls{mixin-based composition} mechanism as a clean replacement for multiple inheritance.
 
-\subsection{Funtctional paradigm}
+\subsection{Functional paradigm}
 Scala is also a functional language in the sense that every function is a value.
 Scala provides a lightweight syntax for defining anonymous functions, it supports higher-order functions, it allows functions to be nested, and it supports currying.
 Scala's case classes and its built-in support for pattern matching provide the functionality of algebraic types, which are used in many functional languages.
 Singleton objects provide a convenient way to group functions that aren't members of a class.
 
 \subsection{Scala functionalities related to the work of the thesis}
+
+\subsubsection{Higher order functions and currying}
+Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful syntactic sugar for the declaration of \gls{AWS} \gls{EC2} IaC resources in a 
+concise and elegant way.
+\paragraph{Higher order functions}
+An higher order function is function that either takes one or more functions as arguments or returns a function as return value, or both of them.
+Such a feature is at the basis of the functional programming paradigm since it lets concatenates function and create more complex and more powerful abstract constructs such as functors, applicatives and monads, so that we can eventually work on data in an immutable, and then safe, way.
+We'll see more about functors and monads in the \hyperref[sssec:functors-monads]{Functor and monads} paragraph.
+\paragraph{Currying}
+Currying is the transformation of a function with multiple arguments into a sequence of single-argument functions. That means, converting a function like \texttt{f(a, b, c, ...)} into a function like \texttt{f(a)(b)(c)...}.
+To give a more detailed example let's consider the following function in Scala:
+\begin{verbatim}
+  def sum(a: Int, b: Int) : Int = 
+    a + b
+\end{verbatim}\mbox{}\\
+Such a function, takes two Int parameters as input and returns the sum of them.
+Therefore, if we call \texttt{sum(1, 2)} we get \texttt{3} as result.
+Now let's instead consider the following function:
+\begin{verbatim}
+  def csum(a: Int)(b: Int) : Int = 
+    a + b
+\end{verbatim}\mbox{}\\
+Here we can call the function writing \texttt{csum(1)(2)} and we'll get 3, but we could also write \texttt{csum(1)} and get, as output, a function that takes a single \texttt{Int} in input and sums it to 1 (the \texttt{Int} we passed to \texttt{csum} previously).
+The returned function will be analogous to this function:
+\begin{verbatim}
+  def csum1(b: Int) : Int = 
+    1 + b
+\end{verbatim}\mbox{}\\
+So the currying is letting us define and use partial functions, and this feature, combined with the feature of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter.
 
 \subsubsection{Traits}
 
@@ -49,7 +78,7 @@ Let's now consider the following example, taken from \href{https://docs.scala-la
 \end{verbatim}\mbox{}\\
 We can notice how we are applying the pattern matching on the variable \texttt{device} to have a different behavior on the base of its actual type.
 This is useful when the case needs to call a method on the pattern.
-In fact, we'll see in the \hyperref[cap:study-case]{Study case: AWS ec2 resource generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
+In fact, we'll see in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
 Obviously, in such an example, the right-hand side of the various cases must have a valid return type with respect to the return type given in the declaration of the method, that in this case is \texttt{String}.
 
 \subsubsection{Extension methods}
@@ -72,9 +101,10 @@ Then we could have this code in our main method:
 We shall notice that such extension methods are letting us extend types without relying on helper classes, letting us elegantly invoke methods on instances of the closed classes or objects we are referring to.
 
 \subsubsection{Given and using keywords}
-\texttt{given} has different usages, but we are interested into its capability to automatically construct an instance of a certain type and make it available to contexts where we are expecting an implicit parameter.
-In fact, to mark a parameter as implicit we shall use the keyword \texttt{using}.
-Doing so, a \texttt{given} variable with the type matching to the implicit parameter's type, if present in the scope, will be injected in.\\
+\label{par:given-using}
+\texttt{given} has different usages, but we are interested into its capability to automatically construct an instance of a certain type and make it available to contexts in which we are expecting an implicit parameter.
+To mark a parameter as implicit we have to use the keyword \texttt{using}.
+Doing so, a \texttt{given} variable with a matching type to the implicit parameter's one, if present in the scope, will be automatically injected in \textbf{at compile time}.\\
 Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-given-using/}{Given and Using Clauses in Scala 3 - Rock the JVM} to better understand such concepts:
 \begin{verbatim}
   given personOrdering: Ordering[Person] with {
@@ -83,14 +113,27 @@ Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-gi
   }
 \end{verbatim}\mbox{}\\
 Here we are creating an instance of \texttt{Ordering} for the \texttt{Person} type.
+Now lets consider the following function declaration:
+\begin{verbatim}
+  def listPeople(persons: Seq[Person])(using ordering: Ordering[Person]) = ...
+\end{verbatim}\mbox{}\\
+We can notice how the \texttt{ordering} parameter has been marked with the \texttt{using} keyword.
+Now, when we'll have to call such a function, it'll require us to just pass the \texttt{persons} parameter, since the implicit one (\texttt{ordering}) will be automatically injected:
+\begin{verbatim}
+  // the compiler will inject the ordering at the end of following function call
+  listPeople(List(Person("Weasley", "Ron", 15), Person("Potter", "Harry", 15)))
+\end{verbatim}\mbox{}\\
+This is a key functionality that, among with other Scala features, will let us achieve our goal in our thesis as we will see in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+
 
 
 
 \subsubsection{Functors and monads}
+\label{sssec:functors-monads}
 \paragraph{Functors}
-A Functor for a type provides the ability for its values to be "mapped over", i.e. apply a function that transforms inside a value while remembering its shape.
+A Functor for a type provides the ability for its values to be "mapped over", i.e., apply a function that transforms the value contained in a given context while remembering its shape.
 We can represent all types that can be "mapped over" with \texttt{F}.
-It's a type constructor: the type of its values becomes concrete when provided a type argument.
+F it's a type constructor: the type of its values becomes concrete when provided a type argument.
 Therefore we write it \texttt{F[\_]}, hinting that the type F takes another type as argument.
 The definition of a generic \texttt{Functor} would thus be written as:
 \begin{verbatim}
@@ -105,12 +148,75 @@ The instance \texttt{Functor} to \texttt{List} is:
       def map[B](f: A => B): List[B] =
         xs.map(f)
 \end{verbatim}\mbox{}\\
-Here we can notice how is used the \texttt{given} keyword to define an instance of a type class for a specific type, to be precise \texttt{Output}.
-The \texttt{Output} type will be explained in the \hyperref[cap:study-case]{Study case: AWS ec2 resource generation with Pulumi} chapter.
+Here we can notice, as previously mentioned in the \hyperref[par:given-using]{Given and using keywords} paragraph, the \texttt{given} keyword is letting us create an instance of the Functor class for the \texttt{List} type.\\
+Lets consider now the following usage of the \texttt{map} extension method on a list:
+\begin{verbatim}
+  val l: List[Int] = List(1, 2, 3)
+  l.map(x => x  * 2) // the output is List(2, 4, 6)
+\end{verbatim}\mbox{}\\
+The map method is now directly used on l. It is available as an extension method since \texttt{l}'s type is List[Int] and a given instance for Functor[List], which defines map, is in scope (thanks to the \texttt{given} keyword).
+
+\paragraph{Monads}
+A \texttt{Monad} provides the ability to sequence operations on values of a given type while maintaining the context of each operation.
+It is a generalization of the \texttt{Functor} concept, which allows us to apply a function to a value in a context.
+Such a generalization is letting us achieve a new level of expressiveness, that can be summarized as the chance to chain operations on a monadic value.\\
+Like \texttt{Functors}, \texttt{Monads} can be represented by a type constructor \texttt{M[\_]} that takes another type as an argument.
+The definition of a Monad is typically given in terms of two operations: \texttt{pure}, which lifts a value into the monadic context, and \texttt{flatMap}, which sequences operations on values in the context.\\
+A generic Monad can be defined as follows:
+\begin{verbatim}
+  trait Monad[M[_]] extends Functor[M] {
+    def pure[A](a: A): M[A]
+    extension [A, B](ma: M[A])
+      def flatMap[B](f: A => M[B]): M[B]
+  }
+\end{verbatim}\mbox{}\\
+And if we want to instantiate a \texttt{given} instance for the \texttt{List} \texttt{Monad} we shall write:
+\begin{verbatim}
+  given Monad[List] with {
+    def pure[A](a: A): List[A] = List(a)
+    extension [A, B](xs: List[A])
+      def flatMap[B](f: A => List[B]): List[B] = xs.flatMap(f)
+  }
+\end{verbatim}\mbox{}\\
+To conclude consider this example on Lists:
+\begin{verbatim}
+  val xs = List(1, 2, 3)
+  val ys = List(4, 5, 6)
+  xs.flatMap(x => ys.map(y => x + y)) // List(5, 6, 7, 6, 7, 8, 7, 8, 9)
+\end{verbatim}\mbox{}\\
+The fact we got a List[Int] as return type from the flatMap operation is letting us the chance to apply immediately after another operation on such a value.
+Differently, if we use map on xs, we will obtain the following result:
+\begin{verbatim}
+  val xs = List(1, 2, 3)
+  val ys = List(4, 5, 6)
+  xs.map(x => ys.map(y => x + y)) // List(List(5, 6, 7), List(6, 7, 8), List(7, 8, 9))
+\end{verbatim}\mbox{}\\
+that is of type List[List(Int)]. With this new type, we might have troubles in chaining operations since the data structure has changed.
+%The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter.
 
       
 
 \subsubsection{For comprehension}
+Scala offers a lightweight notation for expressing \gls{sequence comprehension}s.
+Comprehensions have the form \texttt{for (enumerators) yield e}, where \texttt{enumerators} refers to a semicolon-separated list of enumerators.
+An \texttt{enumerator} is either a generator which introduces new variables, or it is a filter.
+A comprehension evaluates the body \texttt{e} for each binding generated by the \texttt{enumerators} and returns a sequence of these values.\\
+The for yield construct in Scala requires two functions to be defined on the type we are iterating on to work: \texttt{map}, and \texttt{flatMap}.
+In fact, it is not a coincidence that we previously introduced the concept of \texttt{Functor} and \texttt{Monad} and \texttt{map} and \texttt{flatMap} functions.
+To better \textit{comprehend} how the for comprehension concept works lets consider a brief example:
+\begin{verbatim}
+  val xs = List("foo", "bar", "baz")
+  val ys = List("hello", "world")
+
+  for {
+    x <- xs
+    y <- ys
+  } yield s"$x $y"
+  // List("foo hello", "foo world", "bar hello", "bar world", "baz hello", "baz world")
+\end{verbatim}\mbox{}\\
+We can notice how we are iterating on the two lists to generate a List of string as result, made of the combinations of the two lists' elements.\\
+The for yield construct, in combination with the \texttt{Monads}, will be a key feature to improve our Scala syntactic sugar for the Pulumi APIs.
+
 
 
 

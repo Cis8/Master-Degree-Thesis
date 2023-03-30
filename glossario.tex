@@ -2,7 +2,7 @@
 %**************************************************************
 % Acronimi
 %**************************************************************
-\renewcommand{\acronymname}{Acronimi e abbreviazioni}
+\renewcommand{\acronymname}{Acronyms and abbreviations}
 
 \newacronym[description={\glslink{iacg}{Infrastructure as Code}}]
     {iac}{IaC}{Inftrastructure as Code}
@@ -45,4 +45,30 @@
     sort=mixin-based composition,
     description={In scala, trait mixins means you can extend any number of traits with a class or abstract class. You can extend only traits or combination of traits and class or traits and abstract class,
     Traits are used to share interfaces and fields between classes. They are similar to Java 8’s interfaces }
+}
+
+\newglossaryentry{AWS}
+{
+    name=\glslink{AWS}{aws},
+    text=AWS,
+    sort=AWS,
+    description={AWS stands for Amazon Web Services. It is a comprehensive, evolving cloud computing platform provided by Amazon that includes a mixture of infrastructure-as-a-service (IaaS), platform-as-a-service (PaaS) and packaged-software-as-a-service (SaaS) offerings. AWS services can offer an organization tools such as compute power, database storage and content delivery services}
+}
+
+
+\newglossaryentry{EC2}
+{
+    name=\glslink{EC2}{EC2},
+    text=EC2,
+    sort=EC2,
+    description={EC2 stands for elastic computing 2. EC2 is a module of AWS that provides scalable computing capacity in the Amazon Web Services (AWS) Cloud }
+}
+
+\newglossaryentry{sequence comprehension}
+{
+    name=\glslink{sequence comprehension}{sequence comprehension},
+    text=sequence comprehension,
+    sort=sequence comprehension,
+    description={In Scala, a sequence comprehension is a syntactic construct that allows you to create new sequences by transforming and filtering existing ones. It's similar to a for loop in other languages, but with a more concise and functional syntax
+    }
 }
