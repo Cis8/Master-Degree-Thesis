@@ -1,0 +1,116 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Scala, a modern functional and object-oriented programming language}
+\label{cap:scala-language}
+%**************************************************************
+
+\intro{Scala brief ovreview}\\
+
+%**************************************************************
+\section{Introduction to Scala}
+\subsection{Scala, a modern functional and object oriented programming language}
+Scala is a modern multi-paradigm programming language designed to express common programming patterns in a concise, elegant, and type-safe way.
+It seamlessly integrates features of object-oriented and functional languages.
+
+\subsection{Object-orientation}
+Scala is a pure object-oriented language in the sense that every value is an object. Types and behaviors of objects are described by classes and traits.
+Classes can be extended by subclassing, and by using a flexible \gls{mixin-based composition} mechanism as a clean replacement for multiple inheritance.
+
+\subsection{Funtctional paradigm}
+Scala is also a functional language in the sense that every function is a value.
+Scala provides a lightweight syntax for defining anonymous functions, it supports higher-order functions, it allows functions to be nested, and it supports currying.
+Scala's case classes and its built-in support for pattern matching provide the functionality of algebraic types, which are used in many functional languages.
+Singleton objects provide a convenient way to group functions that aren't members of a class.
+
+\subsection{Scala functionalities related to the work of the thesis}
+
+\subsubsection{Traits}
+
+\subsubsection{Pattern matching}
+Pattern matching is a mechanism for checking a value against a pattern.
+A successful match can also deconstruct a value into its constituent parts.
+It is a more powerful version of the switch statement in Java and it can likewise be used in place of a series of if/else statements.
+Let's now consider the following example, taken from \href{https://docs.scala-lang.org/tour/pattern-matching.html#}{Tour of Scala - Pattern Matching}, to have a better idea of the expressiveness of such a feature:
+\begin{verbatim}
+  sealed trait Device
+  case class Phone(model: String) extends Device:
+    def screenOff = "Turning screen off"
+
+  case class Computer(model: String) extends Device:
+    def screenSaverOn = "Turning screen saver on..."
+
+
+  def goIdle(device: Device): String = device match
+    case p: Phone => p.screenOff
+    case c: Computer => c.screenSaverOn
+\end{verbatim}\mbox{}\\
+We can notice how we are applying the pattern matching on the variable \texttt{device} to have a different behavior on the base of its actual type.
+This is useful when the case needs to call a method on the pattern.
+In fact, we'll see in the \hyperref[cap:study-case]{Study case: AWS ec2 resource generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
+Obviously, in such an example, the right-hand side of the various cases must have a valid return type with respect to the return type given in the declaration of the method, that in this case is \texttt{String}.
+
+\subsubsection{Extension methods}
+Extension methods let you add methods to a type after the type is defined, i.e., they let you add new methods to closed classes.
+Let's consider an example from \href{https://docs.scala-lang.org/scala3/book/ca-extension-methods.html}{Scala 3 Book - Extension Methods} about the calculation of the circumference of a circle.\\
+In a file we may have:
+\begin{verbatim}
+  case class Circle(x: Double, y: Double, radius: Double)
+\end{verbatim}\mbox{}\\
+And in another:
+\begin{verbatim}
+  extension (c: Circle)
+  def circumference: Double = c.radius * math.Pi * 2
+\end{verbatim}\mbox{}\\
+Then we could have this code in our main method:
+\begin{verbatim}
+  val aCircle = Circle(2, 3, 5)
+  aCircle.circumference
+\end{verbatim}\mbox{}\\
+We shall notice that such extension methods are letting us extend types without relying on helper classes, letting us elegantly invoke methods on instances of the closed classes or objects we are referring to.
+
+\subsubsection{Given and using keywords}
+\texttt{given} has different usages, but we are interested into its capability to automatically construct an instance of a certain type and make it available to contexts where we are expecting an implicit parameter.
+In fact, to mark a parameter as implicit we shall use the keyword \texttt{using}.
+Doing so, a \texttt{given} variable with the type matching to the implicit parameter's type, if present in the scope, will be injected in.\\
+Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-given-using/}{Given and Using Clauses in Scala 3 - Rock the JVM} to better understand such concepts:
+\begin{verbatim}
+  given personOrdering: Ordering[Person] with {
+    override def compare(x: Person, y: Person): Int = 
+      x.surname.compareTo(y.surname)
+  }
+\end{verbatim}\mbox{}\\
+Here we are creating an instance of \texttt{Ordering} for the \texttt{Person} type.
+
+
+
+\subsubsection{Functors and monads}
+\paragraph{Functors}
+A Functor for a type provides the ability for its values to be "mapped over", i.e. apply a function that transforms inside a value while remembering its shape.
+We can represent all types that can be "mapped over" with \texttt{F}.
+It's a type constructor: the type of its values becomes concrete when provided a type argument.
+Therefore we write it \texttt{F[\_]}, hinting that the type F takes another type as argument.
+The definition of a generic \texttt{Functor} would thus be written as:
+\begin{verbatim}
+  trait Functor[F[_]]:
+    extension [A](x: F[A])
+      def map[B](f: A => B): F[B]
+\end{verbatim}\mbox{}\\
+The instance \texttt{Functor} to \texttt{List} is:
+\begin{verbatim}
+  given Functor[List] with
+    extension [A](xs: List[A])
+      def map[B](f: A => B): List[B] =
+        xs.map(f)
+\end{verbatim}\mbox{}\\
+Here we can notice how is used the \texttt{given} keyword to define an instance of a type class for a specific type, to be precise \texttt{Output}.
+The \texttt{Output} type will be explained in the \hyperref[cap:study-case]{Study case: AWS ec2 resource generation with Pulumi} chapter.
+
+      
+
+\subsubsection{For comprehension}
+
+
+

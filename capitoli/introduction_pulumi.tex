@@ -1,0 +1,30 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Pulumi, an IaC platform}
+\label{cap:introduction-pulumi}
+%**************************************************************
+
+\intro{An introduction to Pulumi}\\
+
+%**************************************************************
+\section{Introduction to Pulumi}
+Pulumi is a cloud engineering platform that enables developers and infrastructure teams to build, deploy, and manage cloud-native applications and infrastructure across multiple cloud providers, including AWS, Azure, Google Cloud, and Kubernetes.\\
+Pulumi provides a programming model that allows developers to use familiar languages, such as Python, JavaScript, TypeScript, Go, and (partially) Java to define their IaC and manage it as software.
+In fact, it belongs to the second generation tools of the IaC.\\
+As already mentioned in the \hyperref[cap:introduction-to-iac]{Introduction to Infrastructure as Code} chapter, such an approach, makes it easier to automate the deployment and management of infrastructure and applications, as well as to collaborate across teams and projects.\\
+Pulumi offers a range of tools and features to simplify the development and management of cloud infrastructure, including version control, testing, continuous integration and delivery (CI/CD), monitoring, and security.
+It also provides templates, examples, and libraries for common infrastructure patterns and services, such as containers, serverless functions, databases, and networking.\\
+Overall, Pulumi aims to streamline the process of building and managing modern cloud-native applications and infrastructure, while providing a flexible and developer-friendly experience.
+
+\subsection{The great advantages of Pulumi as a second generation IaC tool}
+First of all, as mentioned in the \hyperref[sssec:second-wave]{Serverless Infrastructure as programming language code - the second wave} paragraph, all the functionalities that comes along a programming language are letting us achieve more robust and powerful solutions for our infrastructure, rather than what we could achieve with the expressive power of a markup language (like the ones used with \gls{Terraform}).
+Being the focus of this thesis, we'll discuss more about such advantages in the \hyperref[cap:comparison-between-languages]{Comparison between the languages for Pulumi and the advantages of Scala Chapter}.\\
+Furthermore, as aforementioned, Pulumi is a multi-cloud tool. Thanks to this we can rely on a single IaC tool for managing resources across different cloud platforms.\\
+Moreover, Pulumi lets the user choose its favorite programming language, or the one that in its opinion is a best-fit for the need to be addressed.
+In other words, such a choice can both reduce the requirements placed on the user's knowledge, since it can choose among many different programming languages, 
+and at the same time offer different programming paradigms to choose from, so that for any need there is a programming language that is addressing such a need better than the others.\\
+Finally, Pulumi comes with a range of integrated tools and features, such as automatic parallelism, drift detection, and stack references, making it easier to manage complex infrastructure and deployments.
+

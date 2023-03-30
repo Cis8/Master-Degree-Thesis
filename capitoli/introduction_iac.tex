@@ -1,0 +1,81 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Introduction to Infrastructure as Code}
+\label{cap:introduction-to-iac}
+%**************************************************************
+
+\intro{An introduction to iac}\\
+
+%**************************************************************
+\section{Infrastructure as Code}
+
+\subsection{What is IaC}
+
+Infrastructure as Code is the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools. \\
+The IT infrastructure managed by this process comprises both physical equipment, such as bare-metal servers, as well as virtual machines, and associated configuration resources. \\
+The definitions may be in a version control system. The code in the definition files may use either scripts or declarative definitions, rather than maintaining the code through manual processes, but IaC more often employs declarative approaches. 
+
+\subsubsection{Types of approaches}
+
+There are generally two approaches to IaC: declarative (functional) vs imperative (procedural). The difference between the declarative and the imperative approach is essentially \textit{what} versus \textit{how}.
+The declarative approach focuses on what the eventual target configuration should be; the imperative focuses on how the infrastructure is to be changed to meet this.
+The declarative approach defines the desired state and the system executes what needs to happen to achieve that desired state.
+Imperative defines specific commands that need to be executed in the appropriate order to end with the desired conclusion.
+
+\subsubsection{Methods}
+
+There are two methods of IaC: push and pull.
+The main difference is the manner in which the servers are told how to be configured.
+In the pull method, the server to be configured will pull its configuration from the controlling server.
+In the push method, the controlling server pushes the configuration to the destination system.
+
+\subsection{Advantages of IaC}
+
+The value of IaC can be broken down into three measurable categories: \textbf{cost}, \textbf{speed}, and \textbf{risk}.
+Cost reduction aims at helping not only the enterprise financially, but also in terms of people and effort, meaning that by removing the manual component, people are able to refocus their efforts on other enterprise tasks.
+Infrastructure automation enables speed through faster execution when configuring your infrastructure and aims at providing visibility to help other teams across the enterprise work quickly and more efficiently.
+Automation removes the risk associated with human error, like manual misconfiguration; removing this can decrease downtime and increase reliability.\\
+Related to the risk, we could highlight the importance of the \textbf{consistency} of such an approach.
+Through the manual modifications to the infrastructure achieved in a solution without IaC, at some point will be extremely hard to reproduce an exact configuration since some ad-hoc steps were required
+whilst some others were executed in a different order.
+Infrastructure as Code enforces consistency by allowing users to represent infrastructure environments using code.
+Therefore, the deployment and modification of resources will always be consistent and idempotent (i.e. every time a specific operation gets executed, the same result will be generated).\\
+Furthermore, IaC tools usually offer mechanisms to enhance reusability.
+This feature makes your code base less verbose and more readable while at the same time team members are encouraged to apply best practices.\\
+Finally, another big advantage of IaC is collaboration.
+Since the infrastructure resources are defined in configuration files it means that these files can be version controlled.
+At any given time, the team is able to collaborate together in order to modify an environment and even be able to see the history (from commits) of an infrastructure resource.
+This also makes debugging much easier and accurate.
+
+
+\subsection{Challanges of IaC}
+
+While IaC offers numerous benefits, there are also several challenges that organizations must address when implementing this approach.\\
+One of the major challenges is the adoption discrepancies that arise when integrating new frameworks with existing technology. This requires careful coordination with other teams, particularly those responsible for security and compliance, and can result in difficulties in determining where resources are being delivered, controlled, and managed. To address these issues, organizations must continually communicate and audit their IaC adoption to minimize infrastructure drift and ensure that security measures remain up to date.
+
+Another challenge is the need for security assessment tools that can effectively evaluate the dynamic nature of IaC. Traditional security measures may require significant cycles to be integrated with IaC, and there may be a need for human checks to ensure that resources are operating correctly and being used by the appropriate applications. Organizations may need to invest in new tools or capabilities to ensure proper control and monitoring.
+
+The implementation of IaC also requires a high degree of technical competence, which can result in the need for new human capital. Senior executives may face challenges in continually investing in employee skills, particularly if the organization is in the early adoption phase. Outsourcing IaC services may be a viable option for organizations to improve automation processes in terms of cost and overall IT infrastructure quality.
+
+Versioning and traceability of settings can also be a challenge when IaC is utilized widely across an organization with various teams. As IaC becomes more complex, it can be difficult to keep track of infrastructure and identify infra-drift, making it essential to implement effective version control and tracking mechanisms.
+
+
+
+
+\subsection{Evolution of IaC}
+
+\subsubsection{Tools designed for Serverless Applications - the first wave}
+The foundation of IaC in the public clouds is these three cloud vendor-specific tools: AWS CloudFormation in AWS, Azure Resource Manager (ARM) in Azure, and Cloud Deployment Manager in GCP.
+These are YAML or JSON based, declarative tools and have been in cloud toolboxes for a long time and require a fair amount of markup code.
+Tools with shortcuts or “conventions over configuration” were developed to boost productivity and make distributed microservice applications seem more like a traditional monolithic application or a framework.
+These tools provide best-practice defaults and enable building and testing your serverless applications locally on your machine.
+\subsubsection{Serverless Infrastructure as programming language code - the second wave}
+\label{sssec:second-wave}
+Declarative language has some limitations when there is the need to do more complex business logic than what parameters, conditions, mappings, and loops (Terraform only) allow to do.
+Sometimes, there is the need to use external scripting to have the work done.
+A programming language could address such a problem and let us get around these boundaries and limitations.
+This second generation tools generate the declarative markup code with the aid of a programming language, or bypass it and utilizes cloud APIs.
+These kind of tools with programming language support is a rising and trending approach in IaC at the moment.
