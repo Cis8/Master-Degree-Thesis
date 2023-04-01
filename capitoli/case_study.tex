@@ -174,6 +174,7 @@ Lets extend our code in this way:
 The apply function is letting us access \texttt{Output<[string[], string]>} and apply some logic on the inner values.\\
 
 \paragraph{The apply's lambda}
+\label{par:ts-lambda}
 Now that we have the access to the list of availability zones and the VPC ID, we can iterate over the availability zones and create the subnets for our VPC.
 Here is the complete code of the function:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -329,13 +330,15 @@ These builders will create an instance of the respective classes that will be us
 So, for our case study we need to consider: the name to be assigned at the created resource on the Pulumi stack, the builder of the respective \texttt{Args} class of the resource, and the \texttt{CustomResourceOptions} builder.
 
 
-\subsection{Syntactic sugar}
+\subsection{Syntactic sugar usage}
+\label{ssec:syn-sug-usage}
 Our syntactic sugar is split in 2 categories of functions.
 The first is about the functions that represent the constructors of the resources.
 The second is for the methods available within the builders of the \texttt{Args} classes and for the CustomResourceOptions builder functions.
 The idea to create a resource is to call the \textit{sugarized} function that represent the constructor of that resource, and and then call the Builder methods to assign the various parameters to the resource.
 
 \subsubsection{Vpc creation}
+\label{sssec:vpc-creation-scala}
 This is how a Vpc resource can be created with my syntactic sugar:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
   val myVpc: Vpc = vpc("scala-main") ({
@@ -405,21 +408,94 @@ Much different from the other resources is the function to create the subnets:
         })
     )
 \end{lstlisting}\mbox{}\\
+We can notice here how we had the possibility to use the \texttt{map} function on \texttt{availabilityZonesNames()}.
+\texttt{availabilityZonesNames()} returns a \texttt{Output[GetAvailabilityZonesResult]} value, that isn't directly accessible from the \texttt{map} function.
+To achieve such a result we made a monad out of the \texttt{Output} type, so that map can be applied on the inner value of the \texttt{Output} "box".
+We'll see better how is the actual implementation of the monad soon.\\
+The for yield construct here is iterating over a zipped list made out of the availability zones names and the CIDR blocks for the respective kind of subnet to create (private or public, based on the input parameter isPvt).
+The for yield, for each tuple \texttt{(name, cidr)} will create a \texttt{Subnet} value and will return a \texttt{Subnet[]} as output.
+Now, the for is still inside the lambda of the \texttt{availabilityZonesNames().map} function.
+Consider the fact that \texttt{map} takes an \texttt{Output[A]} and returns an \texttt{Output[B]}, where \texttt{A = GetAvailabilityZonesResult} and \texttt{B = Output[Iterable[Subnet]]}.
+This is different from the typescript implementation in the \hyperref[par:ts-lambda]{Apply's lambda} paragraph, where the function that creates the subnets returns a plain \texttt{Subnet[]}.\\
+We will make further considerations about such a difference in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.\\
+
+\subsubsection{Attaching the subnets to the routing table}
+\begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+  def attachRouteTableToPubSubnets(): Output[Iterable[RouteTableAssociation]] =
+    pubSubnets.map((subnets: Iterable[Subnet]) =>
+        for
+          (ps, idx) <- subnets.zipWithIndex
+        yield
+          routeTableAssociation(idx + "-assoc-scala") ({
+            subnetId(ps.getId())
+            routeTableId(myRouteTable.getId())
+          }, {
+            parent(myVpc)
+          })
+      )
+\end{lstlisting}\mbox{}\\
+Similarly to the subnet creation function, also here we use map to "unbox" an \texttt{Output[Iterable[Subnet]]} value, to apply some logic on the inner value and then return a \texttt{Output[Iterable[RouteTableAssociation]]} value as result.
+Since the logic is analogous we won't comment this code further, but the fact we're having these two functions that both take an Output[A] as input and return an Output[B] will be a key point for our observations in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+
+\subsection{Syntactic sugar for the constructors of the resources}
+All the methods that we just used for creating the Pulumi resources in Scala (\texttt{vpc, internetGateway}, ecc.), behind the scenes are implemented following a common pattern.
+Consider the vpc function:
+\begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+  def vpc(param: String)
+         (init: VpcArgs.Builder ?=> Unit,
+          initOpt: (CustomResourceOptions.Builder ?=> Unit) = baseOpts): Vpc =
+	  given b: VpcArgs.Builder= VpcArgs.builder()
+	  init
+	  given bo: CustomResourceOptions.Builder = CustomResourceOptions.builder()
+	  initOpt
+	  new Vpc(param, b.build(), bo.build())
+\end{lstlisting}\mbox{}\\
+Lets analyze the function by steps.
+First of all we can see that the function declaration is curried, we have 2 parentheses with different input parameters.\\
+The first parentheses take simply a string parameter, that is used to set the name of the \texttt{Vpc} resource on the Pulumi stack.\\
+The second parenthesis are taking two lambdas as parameters: a \texttt{VcpArgs.Builder ?=> Unit}  and a \texttt{CustomResourceOptions.Builder ?=> Unit}, with default parameter baseOpts, that we'll see in a moment what is.\\
+In Scala, a lambda that takes an Int and returns a String has this type notation: \texttt{Int => String}, so does that '\texttt{?}' in front of the '\texttt{=>}' mean?
+\textit{It's fun how that exact '\texttt{?}' symbol it is perfectly representing our perplexity about its meaning}.\\
+Such '\texttt{?=>}' is denoting a context function, that is a function with (only) context parameters.
+In the \hyperref[par:given-using]{Given and using keywords} paragraph we introduced the \texttt{using} keyword.
+Such '\texttt{?}' is quite analogous to a \texttt{using} keyword used to mark an function's input parameter as a context parameter.\\
+This is, in part, what let us call the builder methods like \texttt{cidrBlock("10.136.0.0/24")} and \texttt{tags("Name" -> "myVpcScala")} (as shown in the code shown in the \hyperref[sssec:vpc-creation-scala]{Vpc creation in Scala} paragraph)
+without having to call them on a specific builder instance.
+We will get the whole picture when we'll talk about the syntactic sugar for the builder methods in the \hyperref[ssec:syn-sug-builders]{Syntactic sugar for the builders' methods} paragraph.
+
+\subsubsection{Correspondence between the input parameters and the user defined code used to create the VPC}
+To have a better idea to what these parameters refer in our VCP creation case, consider this image:
+\begin{center}
+  \includegraphics[width=1.3\columnwidth]{case_study/vpc_params_boxes} 
+  \captionof{figure}{Parameters correspondence}
+\end{center}\mbox{}\\
+The red box represents the name for our VPC resource on the Pulumi stack.\\
+The green one, with the curly brackets, is the lambda that takes a \textit{given} \texttt{VpcArgs.Builder} as an implicit parameter from the context.
+In fact we are not providing any explicitly.
+The \texttt{given b} defined in the first line of the body of the \texttt{vpc} function is the instantiation of a \textit{given} instance of such a builder, that will be automatically injected by the compiler in the \texttt{init} lambda represented by the green box.\\
+Analogous is the concept for the blue box.\\
+
+\subsubsection{Vpc construction}
+Now that we understood what are the input parameters of our \texttt{vpc} function and to what do they correspond in the resource creation shown in the \hyperref[ssec:syn-sug-usage]{Syntactic sugar usage} section, we can see how the actual creation of the resource is made.
+After having executed the \texttt{init} and \texttt{initOpt} lambdas, that behind the scenes will set the parameters of the respective \textit{given} builders, we can create the resource using the constructor offered by the Pulumi Java APIs.
+\texttt{new Vpc(param, b.build(), bo.build())} is a direct call to such libraries, and will create actually create the \texttt{VPC}.
+
+\subsubsection{The baseOpts function}
 
 
-\subsubsection{Syntactic sugar for the builders}
 
 
-\subsubsection{Syntactic sugar for the constructors of the resources}
 
-\subsubsection{Functor and Monads for the Output type}
+
+\subsection{Syntactic sugar for the builders' methods}
+\label{ssec:syn-sug-builders}
+
+\subsection{Functor and Monad implementation for the Output type}
 
 \subsection{Automatic code generation for the syntactic sugar}
 
-\subsubsection{What Pulumi asks for the official support of a new Language}
+\subsubsection{Pulumi Java APIs libraries inspection with JavaParser}
 
-\subsubsection{Raw automatic code generation with JavaParser}
-
-\subsubsection{Usage of the generated code as a library}
+\subsubsection{Raw automatic syntactic sugar code generation}
 
 \subsubsection{Possible future improvements for the code generation with Scalameta}
