@@ -69,6 +69,75 @@
     name=\glslink{sequence comprehension}{sequence comprehension},
     text=sequence comprehension,
     sort=sequence comprehension,
-    description={In Scala, a sequence comprehension is a syntactic construct that allows you to create new sequences by transforming and filtering existing ones. It's similar to a for loop in other languages, but with a more concise and functional syntax
+    description={In Scala, a sequence comprehension is a syntactic construct that allows you to create new sequences by transforming and filtering existing ones. It's similar to a for loop in other languages, but with a more concise and functional syntax }
+}
+
+\newglossaryentry{Azure Resource Manager}
+{
+    name=\glslink{Azure Resource Manager}{Azure Resource Manager},
+    text=Azure Resource Manager,
+    sort=Azure Resource Manager,
+    description={Azure Resource Manager is the deployment and management service for Azure. It provides a management layer that enables you to create, update, and delete resources in your Azure account
     }
+}
+
+\newglossaryentry{Azure}
+{
+    name=\glslink{Azure}{azure},
+    text=Azure,
+    sort=Azure,
+    description={Microsoft Azure, formerly known as Windows Azure, is Microsoft's public cloud computing platform. It provides a broad range of cloud services, including compute, analytics, storage and networking}
+}
+
+\newglossaryentry{Cloud Deployment Manager}
+{
+    name=\glslink{Cloud Deployment Manager}{Cloud Deployment Manager},
+    text=Cloud Deployment Manager,
+    sort=Cloud Deployment Manager,
+    description={Google Cloud Deployment Manager is an infrastructure deployment service that automates the creation and management of Google Cloud resources. Write flexible template and configuration files and use them to create deployments that have a variety of Google Cloud services, such as Cloud Storage, Compute Engine, and Cloud SQL, configured to work together}
+}
+
+\newglossaryentry{GCP}
+{
+    name=\glslink{GCP}{gcp},
+    text=GCP,
+    sort=GCP,
+    description={Google Cloud Platform (GCP), offered by Google, is a suite of cloud computing services that runs on the same infrastructure that Google uses internally for its end-user products, such as Google Search, Gmail, Google Drive, and YouTube. Alongside a set of management tools, it provides a series of modular cloud services including computing, data storage, data analytics and machine learning}
+}
+
+\newglossaryentry{VPC}
+{
+    name=\glslink{VPC}{vpc},
+    text=VPC,
+    sort=VPC,
+    description={A virtual private cloud (VPC) is a secure, isolated private cloud hosted within a public cloud. VPC customers can run code, store data, host websites, and do anything else they could do in an ordinary private cloud, but the private cloud is hosted remotely by a public cloud provider. (Not all private clouds are hosted in this fashion.) VPCs combine the scalability and convenience of public cloud computing with the data isolation of private cloud computing}
+}
+
+\newglossaryentry{subnet}
+{
+    name=\glslink{subnet}{Subnet},
+    text=subnet,
+    sort=subnet,
+    description={In computer networking, a subnet is a smaller network within a larger network. It is created by dividing a larger network into smaller segments, with each segment having its own unique network address.\\
+    A subnet is identified by its subnet mask, which is a 32-bit number used to divide an IP address into two parts - the network address and the host address. The subnet mask determines which bits in the IP address are used to identify the network and which bits are used to identify the hosts.\\
+    Subnets are commonly used to improve network performance and security. By dividing a larger network into smaller subnets, network traffic can be reduced and more efficiently managed. Additionally, subnets can be used to isolate different parts of a network for security purposes, preventing unauthorized access to sensitive data or resources}
+}
+
+\newglossaryentry{internet gateway}
+{
+    name=\glslink{internet gateway}{internet gateway},
+    text=internet gateway,
+    sort=internet gateway,
+    description={An internet gateway is a network component that serves as the entry and exit point between a private network, such as a Virtual Private Cloud (VPC) in the cloud, and the public internet.\\
+    An internet gateway is responsible for translating the private IP addresses used within a private network to public IP addresses used on the internet, and vice versa. It enables instances within a VPC to communicate with the internet, and allows external users and resources to communicate with instances within the VPC.\\    
+    An internet gateway typically includes two network interfaces - one that connects to the VPC, and another that connects to the public internet. It forwards traffic between the VPC and the internet, and routes traffic between the different subnets within the VPC}
+}
+
+\newglossaryentry{routing table}
+{
+    name=\glslink{routing table}{routing table},
+    text=routing table,
+    sort=routing table,
+    description={In computer networking, a routing table, or routing information base (RIB), is a data table stored in a router or a network host that lists the routes to particular network destinations, and in some cases, metrics (distances) associated with those routes. The routing table contains information about the topology of the network immediately around it.\\
+    In our case, the routing table has been used to bind the public subnets to the internet gateway, so that they can receive and send packets over the internet}
 }

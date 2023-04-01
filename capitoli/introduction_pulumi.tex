@@ -30,13 +30,53 @@ Finally, Pulumi comes with a range of integrated tools and features, such as aut
 
 \section{Pulumi functioning}
 
+
 \subsection{The stack}
+When creating a new Pulumi application, the first step is to define a stack.
+A stack represents a set of cloud resources that can be managed as a cohesive unit.
+Each stack is associated with a particular cloud provider (such as AWS, Azure, or GCP), and contains a list of the resources that should be created.\\
+The stack definition typically includes information such as the provider, the region in which the resources should be created, and any required configuration settings.
+This information is used by Pulumi to provision and manage the resources in the stack.
 
 \subsection{APIs to define the resources to be created}
+Once the stack is defined, you write code that implements the resource management logic.
+Pulumi provides libraries for several programming languages, including TypeScript, Python, Go, .NET, and partially Java.
+You use these libraries to create and configure cloud resources.\\
+In Pulumi, you define resources using a "resource constructor" function.
+This function takes in the configuration for the resource as input, and returns a reference to the newly-created resource.
+You can then use this reference to manage the resource throughout its lifecycle.\\
+Pulumi code can also contain logic for managing relationships between resources.
+For example, you can specify that one resource depends on another, so that Pulumi knows to create the dependent resource first.
 
 \subsection{Creating and updating resources with Pulumi commands}
+Once the code is written, you use Pulumi to create the cloud resources specified in the stack definition.
+Pulumi uses the provider cloud API to create the resources and corresponding configurations. 
+The resource creation process is declarative, which means that Pulumi automatically figures out the order in which resources should be created based on their dependencies.\\
+Pulumi also supports continuous delivery, meaning that changes to your code are automatically detected and used to update existing resources.
+When a change is detected, Pulumi compares the desired state (based on your code) to the current state (based on the resources in the cloud) and makes any necessary changes to bring the resources into compliance with the desired state.
 
 \subsection{Viewing resources state}
+Pulumi provides a command to view the state of the resources managed by the application: \texttt{pulumi stack}.
+This command shows the created resources, their properties, and their current state. 
+This information can be used to debug issues and ensure that resources are configured correctly.\\
+The state of a resource is maintained by Pulumi in a "state file".
+This file contains information about the resources that have been created, as well as their current configuration and state.
+The state file is automatically updated by Pulumi as resources are created, updated, or deleted.
 
 \subsection{Restoring resources state}
+In case of issues or errors during resource creation or management, you can use Pulumi to restore the resource state to the last known good state.
+This ensures that cloud resources are always consistent with the code and stack definition.\\
+Pulumi uses the state file to track the current state of the resources it manages.
+If the state of a resource becomes inconsistent with the desired state (for example, if a resource is accidentally deleted), you can use Pulumi to recreate the resource based on the information in the state file.
+This restores the resource to its last known good state and brings it back into compliance with the stack definition.
 
+\section{Pulumi's Output}
+In an IaC context, and therefore with Pulumi, the creation of the resources is not immediate.
+Hence, in our code when we call a constructor for given resource, we are not actually creating it in that exact moment, but we are rather requesting Pulumi to instantiate such a resource on the given cloud provider.
+So, the usage of that resource is not available until Pulumi will have completed its creation on the cloud provider.
+How can we perform operations on a resource when we do not know when it will become available?
+Pulumi addresses such a problem with the \texttt{Output} type.\\
+In Pulumi, \texttt{Output} values are typically computed asynchronously, so that they can represent resources that are being provisioned by cloud providers.
+Like a future, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
+This feature will come handy to chain the definition of resources that depends on other resources.\\
+We'll see how to create a Monad out of the \texttt{Output} type so that we'll be able to boost our syntactic sugar in the Scala version of the case study.
