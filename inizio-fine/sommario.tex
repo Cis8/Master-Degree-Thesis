@@ -13,17 +13,21 @@
 \let\cleardoublepage\relax
 \let\cleardoublepage\relax
 
-\chapter*{Sommario}
+\chapter*{Summary}
 
-Il presente documento descrive il lavoro svolto durante il periodo di \textit{stage}, della durata di circa trecentoventi ore, dal laureando Alessandro Rizzo presso l'azienda Infocert S.p.A.
-Gli obiettivi da raggiungere erano molteplici.\\
-In primo luogo era richiesto lo studio e la comprensione dei fondamenti della \textit{Chaos Engineering}.
+The document describes the work done from the graduating Cisotto Emanuele, in collaboration with Zoleo Andrea, from the Kynetics Srl company.
+The objectives to achieve were many.\\
+First, the study of the basics of the functioning of the Pulumi technology and the Scala language was made.\\
+Second, a definition of a case study based on some \gls{AWS} \gls{EC2} resources was done. Hence, the respective implementation using Pulumi and the Typecript language has been done.\\
+Then, after having identified the shortcomings of Pulumi with the Typescript language, a syntactic sugar for the Scala support for Pulumi has been manually coded.
+Such a syntactic sugar for Scala is based on the Java APIs for Pulumi.\\
+At that point, the same case study has been implemented with the newly created Scala APIs for Pulumi.\\
+Thus, an inspection of the Pulumi's Java libraries was made with the \gls{JavaParser} library, to infer useful information about the structure of the APIs so that an automatic generation of the syntactic sugar code was possible.\\
+Finally, the code to automatically generate all the Scala syntactic sugar code for all the AWS EC2 resources used in the case study was coded and used to generate such APIs.
+The generated code was eventually exported as a library so that it could be used in any Pulumi Scala project.
 
-In secondo luogo era richiesta l'implementazione di una versione rivisitata di un \textit{software} aziendale già esistente, MICO, in seguendo i principi dell'architettura a microservizi e reactive tramite il \textit{framework} Akka.
-Tale \textit{framework} permette di utilizzare il modello ad attori per gestire il completamento di diversi task simultaneamente e in maniera asincrona.
-In questo sviluppo andava applicato quanto appreso nella fase di studio per progettare e realizzare un'applicazione il più resiliente possibile.
 
-Infine, una volta completato lo sviluppo, andavano applicati tutti i principi di \textit{Chaos Engineering} appresi durante la fase di studio per aumentare la fiducia nell'applicazione e per scoprire eventuali vulnerabilità non ancora considerate con lo scopo ultimo di aumentare la resilienza e l'affidabilità del prodotto.
+
 
 %\vfill
 %

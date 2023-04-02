@@ -55,7 +55,7 @@ The returned function will be analogous to this function:
   def csum1(b: Int) : Int = 
     1 + b
 \end{verbatim}\mbox{}\\
-So the currying is letting us define and use partial functions, and this feature, combined with the feature of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter.
+So the currying is letting us define and use partial functions, and this feature, combined with the feature of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
 
 \subsubsection{Pattern matching}
 Pattern matching is a mechanism for checking a value against a pattern.
@@ -77,7 +77,7 @@ Let's now consider the following example, taken from \href{https://docs.scala-la
 \end{verbatim}\mbox{}\\
 We can notice how we are applying the pattern matching on the variable \texttt{device} to have a different behavior on the base of its actual type.
 This is useful when the case needs to call a method on the pattern.
-In fact, we'll see in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
+In fact, we'll see in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
 Obviously, in such an example, the right-hand side of the various cases must have a valid return type with respect to the return type given in the declaration of the method, that in this case is \texttt{String}.
 
 \subsubsection{Extension methods}
@@ -212,7 +212,7 @@ Differently, if we use map on xs, we will obtain the following result:
   xs.map(x => ys.map(y => x + y)) // List(List(5, 6, 7), List(6, 7, 8), List(7, 8, 9))
 \end{verbatim}\mbox{}\\
 that is of type List[List(Int)]. With this new type, we might have troubles in chaining operations since the data structure has changed.
-%The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{Study case: AWS EC2 resource generation with Pulumi} chapter.
+%The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
 
       
 

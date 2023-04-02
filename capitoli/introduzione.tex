@@ -1,0 +1,60 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Introduction}
+\label{cap:introduction}
+%**************************************************************
+
+%\intro{Scala brief ovreview}\\
+
+%**************************************************************
+\section{Infrastructure as Code}
+In the last decade \gls{cloud computing} has grown a lot, lifting many companies from the need to setup and maintain a physical infrastructure on their own.
+Many cloud service providers, such as \gls{AWS}, \gls{Azure}, and \gls{GCP}, are a great opportunity for companies to reduce the costs and the time needed to setup a working infrastructure.\\
+Though, the manual management of the resources on the cloud service providers still has some downsides. 
+First, the human error can lead to misconfiguration, that results in an unavailable infrastructure.
+Second, a suboptimal speed for its management is achieved since it is manually managed by human operators.
+Finally, the financial and humanitarian costs for the company are non-negligible since some personal has to be exclusively assigned to the management of the cloud resources of the infrastructure.\\
+Infrastructure as Code is the proposed solution that is taking hold across many companies.
+It is the management and provisioning the cloud providers' resources through machine-readable definition files.
+With such an approach the aforementioned risks are erased and a much more robust, efficient, and cheap solution is provided.
+
+\section{Pulumi, a second generation IaC tool}
+The Infrastructure as Code tools are divided into 2 generations.
+The first one comprises tools that adopt a declarative approach based on JSON or YAML files.
+The second one includes tools based on actual programming languages.\\
+The second generation has more potential since the management of the infrastructure when all the features of the programming languages are given can be more sharp and precise.\\
+Pulumi supports already many programming languages such as Python, JavaScript, TypeScript, Go, and (partially) Java.
+
+\section{Scala, a promising language for Pulumi}
+Every language has its own features that make it a best fit to solve some problems, and a sub-optimal solution for others.\\
+My tutor and I have identified Scala as a language with good features for the Infrastructure as Code scenario.
+The declarative approach nature of Pulumi is matching with the Scala's functional paradigm.
+
+\section{The objective}
+The final objective for the thesis is to understand if Scala's features are suitable to define some syntactic sugar functions to let the user use Pulumi with Scala in an intuitive way, writing concise and readable code, with expressive constructs that are instead missing in Typescript.\\
+Furthermore, for all the resources used in the case study, an automatic generator for the Scala's syntactic sugar has to be created, to allow the user to have access to all the APIs of the those cloud resources.
+
+
+
+\section{Thesis organization}
+%After having identified some limitations while using Pulumi with Typescript, was our aim to check if Scala could have been a nice addition to the Pulumi's supported languages.
+%To decide if this was the case, a case study based on AWS EC2 has been implemented in Typescript.
+%Then, some Scala syntactic sugar code has been defined, on the bases of Java APIs for Pulumi, and a Scala version of the case study has been realized.
+%Moreover, we wanted also to create a program that analyzes the Pulumi's Java libraries and automatically generates the syntactic sugar code of the Scala APIs for Pulumi for the modules used in the case study.
+The content of the thesis is structured as follows:
+\begin{description}
+  \item[Introduction to Infrastructure as Code] Introduces the Infrastructure as Code, the various approaches, its advantages and challenges, and an overview of the evolution of the IaC tools.
+  \item[Pulumi, an IaC Platform] Gives an introduction to Pulumi, lists the advantages of Pulumi over the first generation of IaC tools, describes the functioning of the flow of Pulumi for creating the cloud resources and introduces the concept of the \texttt{Output} type in the Pulumi APIs, that will be a key argument for the work thesis.
+  \item[Scala, a modern functional and object-oriented programming language] The chapter begins with a brief introduction to the Scala language. Then, all the functionalities of the language used for the creation of the \textit{sugarized} Scala APIs for Pulumi are presented and explained.
+  \item[Study case: AWS EC2 resources generation with Pulumi] First, the infrastructure of the chosen study case is presented, and all the AWS EC2 resources that has been used are introduced. Then we have the details on how the Typescript implementation has been coded. For each resource created, the code is provided and analyzed to understand its functioning. Then we have a couple of short sections that illustrate how to create and destroy the resource once the IaC code is set in place. It follows the Scala implementation, that is divided in 3 subsections:
+        \begin{itemize}
+          \item A first part that defines how the personally created \textit{sugarized} functions have been used to create the resources
+          \item A second section, that presents all the code of the \textit{sugarized} APIs
+          \item Finally, the automatic \textit{sugarized} code generator is presented
+        \end{itemize}
+  \item[Comparison between the languages for Pulumi and the advantages of Scala] In this chapter the Typescript and the Scala implementations of the case study are compared. The pros and cons of each solutions are highlighted and some final thoughts for the Scala solutions are given.
+  \item[Conclusions] All the conclusions that have been made about Scala for Pulumi and the work done are summarized here along a final thought about the worth to fully extend the Pulumi APIs with a Scala support.
+\end{description}

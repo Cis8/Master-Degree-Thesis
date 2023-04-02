@@ -1,0 +1,19 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../tesi.tex
+
+%**************************************************************
+\chapter{Conclusions}
+\label{cap:conclusions}
+%**************************************************************
+
+%\intro{Scala brief ovreview}\\
+
+%**************************************************************
+\section{The potential of Scala for Pulumi}
+Scala's functional paradigm is matching very well the declarative approach of Pulumi.
+Therefore, the higher order functions, the currying, and the monad for the \texttt{Output} type, along with the modern features offered by the Scala language such as the \texttt{using} and \texttt{given} keywords, has let us create an expressive, concise, and readable syntactic sugar for our Scala Pulumi APIs.\\
+Pulumi offers good challenges for the programming languages when it comes to declare resources that depends on other resources.
+Scala is able to keep up with these challenges, in fact its design features are letting us work perfectly with Pulumi without having to resort to ad-hoc functions created to compensate other languages' shortcoming, such as the \texttt{pulumi.all} function.\\
+In my opinion, a further extension of the work done for the support of Scala in Pulumi would be a great addition to the currently supported languages.
+If possible, a official support of Scala for Pulumi would be much appreciated from the community.

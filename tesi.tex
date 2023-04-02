@@ -13,8 +13,7 @@
                a4paper,                 % carta A4
                twoside,                 % impagina per fronte-retro
                openright,               % inizio capitoli a destra
-               english,                 
-               italian,                 
+               english,                                 
                ]{book}    
 
 %**************************************************************
@@ -23,7 +22,7 @@
 
 %\usepackage{amsmath,amssymb,amsthm}    % matematica
 
-\usepackage[english, italian]{babel}    % per scrivere in italiano e in inglese;
+\usepackage[english]{babel}    % per scrivere in italiano e in inglese;
                                         % l'ultima lingua (l'italiano) risulta predefinita
 
 \usepackage{bookmark}                   % segnalibri
@@ -62,7 +61,7 @@
 
 \usepackage{subfig}                     % sottofigure, sottotabelle
 
-\usepackage[italian]{varioref}          % riferimenti completi della pagina
+\usepackage[english]{varioref}          % riferimenti completi della pagina
 
 \usepackage[dvipsnames]{xcolor}         % colori
 
@@ -105,12 +104,14 @@
 %**************************************************************
 % Materiale principale
 %**************************************************************
-\mainmatter          % Concept Preview}             
+\mainmatter          % Concept Preview}  
+\input{capitoli/introduzione}            
 \input{capitoli/introduction_iac}
 \input{capitoli/introduction_pulumi}
 \input{capitoli/scala_language}
 \input{capitoli/case_study}
 \input{capitoli/comparisons}
+\input{capitoli/conclusioni} 
 % Conclusioni                          
 \appendix 
 

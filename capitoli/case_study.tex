@@ -3,7 +3,7 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Study case: AWS EC2 resource generation with Pulumi}
+\chapter{Study case: AWS EC2 resources generation with Pulumi}
 \label{cap:case-study}
 %**************************************************************
 
@@ -155,6 +155,7 @@ Second, we want to create both a private and public subnet in each availability 
 The \texttt{pulumi.all} function, in combination with the \texttt{apply} function will help us in achieving such a goal.\\
 
 \subsubsection{pulumi.all}
+\label{sssec:pulumi-all}
 \texttt{pulumi.all} is a utility function in Pulumi that allows you to combine multiple Outputs into a single Output that resolves to an array of the resolved values of each Output.
 So if we consider the following code:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -178,43 +179,42 @@ The apply function is letting us access \texttt{Output<[string[], string]>} and 
 Now that we have the access to the list of availability zones and the VPC ID, we can iterate over the availability zones and create the subnets for our VPC.
 Here is the complete code of the function:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
-  protected createAZsSubnets(isPvt: Boolean){
+  protected createAZsSubnets(isPvt: Boolean) : Output<Subnet[]>{
     this.availableZones = aws.getAvailabilityZonesOutput()
-    pulumi.all([this.availableZones.names, this.vpc!.id]).apply(([azNames, vpcId]) => {
+    return pulumi.all([this.availableZones.names, this.vpc!.id]).apply(([azNames, vpcId]) => {
       let i = 0
       let listToPushInto: Subnet[] = Array<aws.ec2.Subnet>()
       azNames.forEach(azName => {
-        let compName = azName + (isPvt ? "-pvt" : "-pub") + "-subnet-typescript"
-        listToPushInto.push(new Subnet(compName, {
+        let fullName = azName + (isPvt ? "-pvt" : "-pub") + "-subnet-typescript"
+        listToPushInto.push(new Subnet(fullName, {
           vpcId: vpcId,
           availabilityZone: azName,
           cidrBlock: isPvt ? this.pvtSubnetsCidrs[i] : this.pubSubnetsCidrs[i],
           tags: {
-            Name: compName,
+            Name: fullName,
           },
-        },
-        {
+        },{
           parent: this.vpc
-        }
-        ));
+        }));
         i++;
       });
-      if(!isPvt){
-        this.pubSubNets = listToPushInto
-        // attaching the route table to the pub sub nets
-        this.attachRouteTableToPubSubnets()
-      }
-      else
-        this.prvSubNets = listToPushInto
+      return listToPushInto
     });
   }
 \end{lstlisting}\mbox{}\\
 In the code we instantiate private or public public subnets basing on the \texttt{isPvt} passed in the \texttt{createAZsSubnets}.
 We can notice that for the creation of a subnet we pass arguments such as \texttt{vpcId}, the availability zone name, the CIDR block, and a name (that is a tag) to better identify it on the stack.\\
-Each newly created subnet is then pushed into the class field \texttt{this.prvSubNets} or \texttt{this.pubSubNets} (that are arrays of subnets), basing on the nature of the subnet.
-The \texttt{this.pubSubNets} will be used by the \texttt{this.attachRouteTableToPubSubnets()} function to bind the public subnets to the internet gateway through the routing table.\\
-The crucial point here is that in order to bind the public subnets to the routing table, we must call \texttt{this.attachRouteTableToPubSubnets()} as the last step in our \texttt{pulumi.all} function call.
-This ensures that we have all the necessary subnets to make the binding, since the call will be done at the completion of the creation of the subnets.
+Each newly created subnet is then pushed into the class field \texttt{this.prvSubNets} or \texttt{this.pubSubNets} (that are arrays of subnets), basing on the nature of the subnet.\\
+The creation of a subnet requires us to provide both the availability zone name and the ID of the VPC.
+Since these two pieces of information are contained in two separate \texttt{Output}s (\texttt{Output<String[]>} and \texttt{Output<String>} respectively) we must first use the \texttt{pulumi.all} to wrap them in a single \texttt{Output<String[], String>}.
+This due to the fact that \texttt{.apply} can accept a single \texttt{Output<A>}, for any \texttt{A} type, value as input and not a pair.
+Then, we can use the \texttt{.apply} to unbox from the \texttt{Output<String[], String>} its inner value.
+Now that we have both the pieces of information out of the context value, we can use them to create the subnets.\\
+%The \texttt{this.pubSubNets} will be used by the \texttt{this.attachRouteTableToPubSubnets()} function to bind the public subnets to the internet gateway through the routing table.\\
+%The crucial point here is that in order to bind the public subnets to the routing table, we must call \texttt{this.attachRouteTableToPubSubnets()} as the last step in our \texttt{pulumi.all} function call.
+%This ensures that we have all the necessary subnets to make the binding, since the call will be done at the completion of the creation of the subnets.
+We can notice that the \texttt{.apply} function is, at the end of its lambda function, returning a list of the created subnets.
+Such a return is also the return of the function and is indeed of the \texttt{Output<Subnet[]>} type.
 
 \subsection{Routing table creation}
 This is the code to create the routing table resource:
@@ -248,19 +248,22 @@ Here is the code of the function:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
   protected attachRouteTableToPubSubnets(){
     let i = 0
-    this.pubSubNets.forEach(subNet => {
-      new aws.ec2.RouteTableAssociation(`${i}-routeTableAssociation-typescript`, {
-        subnetId: subNet.id,
-        routeTableId: this.routeTable!.id,
-      },
-      {
-        parent: this.vpc
-      });
-      i++
+    this.pubSubNets.apply(subNets => {
+      subNets.forEach(sn => {
+        new aws.ec2.RouteTableAssociation(`${i}-routeTableAssociation-typescript`, {
+          subnetId: sn.id,
+          routeTableId: this.routeTable!.id,
+        },
+        {
+          parent: this.vpc
+        });
+        i++
+      })
     });
   }
 \end{lstlisting}\mbox{}\\
-The code is quite straight forward. We are defining a new \texttt{RouteTableAssociation} AWS EC2 resource that requires just the id of the subnet and the id of the routing table to which we want to attach the subnet to.
+Here we used once more, as for the subnets creation, a combination of \texttt{.apply} and a foreach to iterate over all the extracted subnets (\texttt{.foreach}) from the Output context (\texttt{.apply}).\\
+Inside the \texttt{foreach}'s lambda we are defining a new \texttt{RouteTableAssociation} AWS EC2 resource that requires just the id of the subnet and the id of the routing table to which we want to attach the subnet to.
 
 \section{Creating the resources with Pulumi}
 After having seen all the code to create the resources, we'll see what the Pulumi command \texttt{pulumi up} will do.
@@ -341,7 +344,7 @@ The idea to create a resource is to call the \textit{sugarized} function that re
 \label{sssec:vpc-creation-scala}
 This is how a Vpc resource can be created with my syntactic sugar:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
-  val myVpc: Vpc = vpc("scala-main") ({
+  val myVpc = vpc("scala-main") ({
     cidrBlock("10.136.0.0/24")
     tags("Name" -> "myVpcScala")
   },{
@@ -362,7 +365,7 @@ This other trick will be explained later as well.
 \subsubsection{Internet gateway creation}
 Much similar to the VPC resource, we have this code for the internet gateway creation:
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
-  val myIGW: InternetGateway = internetGateway("gw") ({
+  val myIGW = internetGateway("gw") ({
     vpcId(myVpc.getId())
     tags("Name" -> "myIGWScala")
   },{
@@ -399,12 +402,12 @@ Much different from the other resources is the function to create the subnets:
       for
         (name, cidr) <- az.names().zip(if isPvt then pvtSubnetsCidrs else pubSubnetsCidrs)
       yield
-        val compName = name + "-" + (if isPvt then "pvt" else "pub") + "-subnet-scala"
-        subnet(compName) ({
+        val fullName = name + "-" + (if isPvt then "pvt" else "pub") + "-subnet-scala"
+        subnet(fullName) ({
           vpcId(myVpc.getId())
           availabilityZone(name)
           cidrBlock(cidr)
-          tags("Name" -> compName)
+          tags("Name" -> fullName)
         },{
           parent(myVpc)
         })
@@ -438,6 +441,15 @@ We will make further considerations about such a difference in the \hyperref[cap
 \end{lstlisting}\mbox{}\\
 Similarly to the subnet creation function, also here we use map to "unbox" an \texttt{Output[Iterable[Subnet]]} value, to apply some logic on the inner value and then return a \texttt{Output[Iterable[RouteTableAssociation]]} value as result.
 Since the logic is analogous we won't comment this code further, but the fact we're having these two functions that both take an Output[A] as input and return an Output[B] will be a key point for our observations in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+
+\subsubsection{Resources creation with pulumi up}
+\label{sssec:res-cre-ts}
+Now lets make sure that the stack created with \texttt{pulumi up} is the same of the one created with the typescript implementation.
+From this image we can see that they are equivalent to the ones shown in \hyperref[sssec:res-cre-ts]{Resources creation with pulumi up in Typescript}:
+\begin{center}
+  \includegraphics[width=1\columnwidth]{case_study/pulumi_up_scala_result} 
+  \captionof{figure}{pulumi up result with the scala implementation}
+\end{center}\mbox{}\\
 
 \subsection{Syntactic sugar for the constructors of the resources}
 All the methods that we just used for creating the Pulumi resources in Scala (\texttt{vpc, internetGateway}, ecc.), behind the scenes are implemented following a common pattern.
@@ -618,6 +630,7 @@ The \texttt{String} representing the CIDR block is coming directly from the expl
 while the \texttt{VpcArgs} builder is implicitly injected from the compiler since a \textit{given} instance is defined inside the vpc function and the \texttt{b} parameter of the \texttt{cidrBlock} method is marked with \texttt{using}.
 
 \subsubsection{Implicit conversion functions}
+\label{sssec:implicit-converion-functions}
 On top of this, to boost our syntactic sugar I defined also two extra functions: \texttt{tupleToMap} and \texttt{elemToList}.
 The purpose of this functions is to achieve the tricks that I mentioned previously (in the \hyperref[sssec:vpc-creation-scala]{Vpc creation in Scala} and in the the \hyperref[sssec:routetable-creation-scala]{Routetable creation in Scala}) about not needing to explicitly instantiate a singleton Map and a singleton List while passing a single argument to the \texttt{tags} or the \texttt{routes} methods.
 The \texttt{tupleToMap} function is implemented like this:
@@ -704,33 +717,40 @@ We succeeded in getting rid of the \texttt{.pulumiall} method.
 The generation of the syntactic sugar code required the following 2 passages:
 \begin{itemize}
   \item Analyze the source code of Pulumi's Java APIs for AWS EC2 in order to infer information about the constructors of the various resources and the builders' methods present in the Builder of each \texttt{Args} class
-  \item Use the extracted information to automatically generate the code
+  \item Use the extracted information to automatically generate the \textit{sugarized} code
 \end{itemize}
-The first step has been quite straight forward with the aid of the JavaParser library.
-We'll introduce this Java library in the following section.\\
+The first step has been quite straight forward with the aid of the JavaParser library.\\
 The second step has been more problematic.
-As a first attempt, I tried to use the metaprogramming offered from the new Scala 3 Macros, to create the autogenerated code in the form of an \gls{abstract syntax tree} (AST).
+As a first attempt, I tried to use the metaprogramming features offered from the new Scala 3 Macros to create the autogenerated code in the form of an \gls{abstract syntax tree} (AST).
 This solution was potentially promising, since Scala also offers the opportunity to convert these ASTs in code and vice versa at compile time, and so telling us about any error at compile time.
-The problem encountered is that, once we defined the macros for a new type (like cidrBlockOwners), such a type wasn't available at compile time for the other code.
+The problem encountered is that once we defined the macros for a new type (like \texttt{cidrBlockOwners}), such a type wasn't available at compile time for the other code.
 In other words, the types generated through the macro, cannot be referenced in the same project since the whole compilation must finish before having the chance to use the brand new types.\\
-Another option was represented by Scalameta, a library to read, analyze, transform and generate Scala programs, but it isn't compatible with Scala 3, and so had no chance to use it.
+Another option was represented by Scalameta, a library to read, analyze, transform and generate Scala programs, but it isn't compatible with Scala 3, and so I had no chance to use it.
 If the support for Scala 3 will be added to Scalameta, it should be considered as a better approach for the generation of the syntactic sugar code in the future.\\
 So, for the second step, a standard \textit{naive} approach has been adopted.
 The auto-generated code is created with a program that inserts the piece of information extracted from the analysis of the Java APIs with Javaparser into a template for the PulumiBuilderUtilFunctionsForScala and the PulumiUtilFunctionsForScala functions.
 The generated code can then be exported as a library and included into the dependencies of the building tool used in the Pulumi Scala project.
 
 \subsubsection{Pulumi Java APIs libraries inspection with JavaParser}
-Since the code for the inspection is quite verbose (Javaparser is a Java library) and not particularly interesting for the aim of the thesis, I won't report any of the code here and I'll limit to describe the steps that are done to infer the required information from the Java libraries for Pulumi.
+Since the code of the project for the inspection is quite verbose (Javaparser is a Java library) and not particularly interesting for the final objective of the thesis, I won't report any of the code here.
+I'll limit to describe the steps that are done to infer the required information from the Java libraries for Pulumi.
+
+\paragraph{Non Args and Args classes}
+In the Java APIs of Pulumi we have two kind of files (and so classes).
+The firsts are the \textbf{non} ...\texttt{Args} files, that are those files that contain the API for the constructor of a given resource.
+The second kind of files are represented by the \texttt{Args} files.
+Thes classes contains the Builder definition of the respective class and the APIs of the builders' methods used to pass the arguments of the resource while building it with an instance of a builder
+For example, we have the Vpc.java file and the VpcArgs.java files.
 
 \paragraph{DirExplorer}
 The first class that I defined is \texttt{DirExplorer}. This class has the objective to find all the files in a given directory (and the files in the subdirectories), letting us apply some extra logic during its traverse.
-We'll be using such a class in a \texttt{InferInformation} class to extract all the names of our interest.\\
+We'll be using such a class in a \texttt{InferInformation} class to extract all the names of the files of our interest.\\
 
 \paragraph{InferInformation}
 In the \texttt{InferInformation} class we have 3 methods:
 \begin{description}
-  \item[listBuilderMethods] is the function that opens every ...\texttt{Args.java} class and, after having parsed an AST of such file, will save all the methods of its builder in a data structure that we'll introduce soon
-  \item[listConstructorMethods] is the function that opens every other file \textbf{different} from ...\texttt{Args.java} and, after having parsed the corresponding AST, checks if a public constructor for the given resource is available. In such a case it will add the name of the class to a List that represents all the constructors that should be generated for our syntactic sugar code.
+  \item[listBuilderMethods] is the function that opens every ...\texttt{Args.java} file and, after having parsed an AST of such file, will save all the methods of its builder in a data structure that we'll introduce soon
+  \item[listConstructorMethods] is the function that opens every \textbf{non} ...\texttt{Args.java} and, after having parsed the corresponding AST, checks if a public constructor for the given resource is available. In such a case it will add the name of the class to a List that represents all the constructors that should be generated for our syntactic sugar code.
   \item[listFiles] is an helper function for the other two methods that just provides the file names of the classes inspected
 \end{description}
 The data structure used to store the builders' method has the type \texttt{Map[String, (String, LinkedList[String])]}.
@@ -776,3 +796,41 @@ To have an idea of how the filling of a template works lets consider the \texttt
 \end{center}\mbox{}\\
 The template is filled with the variables that represent the name of the constructors, and this is done for each constructor that has been found.\\
 Since also the other functions are similar to this one, won't be reported here.
+
+\subsubsection{The automatically generated syntactic sugar code}
+Since the generated files contains many hundreds of lines of code, I'll report here only some samples of each file.\\
+
+\paragraph{PulumiBuilderUtilFunctionsForScala}
+First we have some default imports:
+\begin{center}
+  \includegraphics[width=1\columnwidth]{case_study/build_imports} 
+  \captionof{figure}{Default import}
+\end{center}\mbox{}\\
+Then we have some all the generated union types, that look like:
+\begin{center}
+  \hspace*{-3cm}\includegraphics[width=1.5\columnwidth]{case_study/generated_union_types} 
+  \captionof{figure}{Generated union types}
+\end{center}\mbox{}\\
+The implicit conversion functions are then printed:
+\begin{center}
+  \includegraphics[width=1\columnwidth]{case_study/implicit_conv_fun} 
+  \captionof{figure}{Implicit conversion functions}
+\end{center}\mbox{}\\
+Finally we have all the builders' methods that we encountered during our visit of the files with the JavaParser project:
+\begin{center}
+  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_builder_methods} 
+  \captionof{figure}{Generated builders' methods}
+\end{center}\mbox{}\\
+
+\paragraph{PulumiUtilFunctionsForScala}
+Also here we start with some default imports, then we have the baseOpts function and then all the constructors for the various resources:
+\begin{center}
+  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_constructors} 
+  \captionof{figure}{baseOpts function and generated constructors}
+\end{center}\mbox{}\\
+
+\paragraph{Final observations on the generated code}
+The builders' methods are really similar to each other, but they are not all following the same exact pattern across the whol AWS EC2 module.
+Due to this fact, the generation of the code was affordable for the resources used in the case study, but to cover some corner cases for the rest of the resources some extra work both for the parser and for the algorithm that fills in the template would have been required.
+Because of lack of time and since was not the final aim of the thesis to develop a complete support of Scala for all the AWS EC2 module, only the partial support for the used resources has been generated.\\
+The constructors, instead, are all similar to each other and a complete support for AWS EC2 has been generated.
