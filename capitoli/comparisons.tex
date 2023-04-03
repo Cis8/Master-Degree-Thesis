@@ -30,7 +30,7 @@ I remind here that the types of these two functions are fully explained in the \
 We'll make furthers considerations on this function in the \hyperref[sssec:readability-for-yield]{Readability of the Scala's for yield vs pulumi.all and .apply} paragraph.
 
 \subsection{Readability in Scala}
-Also in Scala, thanks to the syntactic sugar used, we achieved a surprisingly readable code while defining the resources to be created on our Pulumi stack.
+Also in Scala, thanks to the syntactic sugar used, we achieved a surprisingly readable code while defining the resources to be created on our Pulumi \textit{stack}.
 
 \subsubsection{Function currying}
 The currying of Scala used to define our \textit{sugarized} functions granted us the possibility to declare the resources with this syntax:
@@ -105,7 +105,7 @@ Moreover, with Typescript, we also have to explicitly return the list at the end
 
 \subsubsection{Typescript compensate for its lack of expressiveness with the pulumi.all function}
 In the \hyperref[sssec:pulumi-all]{pulumi.all} paragraph of the subnets creation section, we have seen how the concatenation of \texttt{apply} to the \texttt{pulumi.all} function let us create the subnets across the various availability zones.
-Anyway, The process of wrapping two different \texttt{Ouptut} values in a single \texttt{Output} using the \texttt{pulumi.all} function, and then extract that newly created value form the \texttt{Output} context is verbose and complex.\\
+Anyway, The process of wrapping two different \texttt{Ouptut} values in a single \texttt{Output} using the \texttt{pulumi.all} function, and then extract that newly created value form the \texttt{Output} \textit{context} is verbose and complex.\\
 Now, the \texttt{pulumi.all} function is effective but its existence is required to compensate for the lack of expressiveness of the Typescript language.
 
 \subsubsection{Scala's expressiveness let us get rid of pulumi.all}
@@ -113,8 +113,8 @@ The functional nature of the Scala language let us get rid of the \texttt{pulumi
 The \texttt{apply} function became the actual implementation of the \texttt{flatMap} function for the \texttt{Output[Monad]}.
 The \texttt{map} function that we used in our function for the \hyperref[sssec:subnets-creation]{subnets creation} has been implemented only on the bases of the \texttt{flatMap} function.
 So, we replaced the \texttt{pulumi.all} function with the \texttt{map} function offered by the \texttt{Monad[Output]}, and the \texttt{apply} function is now hidden behind the \texttt{map} implementation.\\
-This achievement is perfectly depicting how the expressiveness of Scala permitted us to satisfy our need of applying functions on values contained inside a context (\texttt{Output} in our case), without resorting to an ad-hoc function created only for that specific purpose.
-In fact, we would be able to implement a monad for any context type, while \texttt{pulumi.all} is working exclusively with the \texttt{Output} type.
+This achievement is perfectly depicting how the expressiveness of Scala permitted us to satisfy our need of applying functions on values contained inside a \textit{context} (\texttt{Output} in our case), without resorting to an ad-hoc function created only for that specific purpose.
+In fact, we would be able to implement a monad for any \textit{context} type, while \texttt{pulumi.all} is working exclusively with the \texttt{Output} type.
 Moreover, the \texttt{map} function is much more intuitive to an user rather than the \texttt{pulumi.all} and the explicit \texttt{apply} functions.
 
 %On the other hand, when we have to combine two values of different \texttt{Output}s types in another value of another \texttt{Output} type, we must rely on the \texttt{pulumi.all} and \texttt{.apply} functions.

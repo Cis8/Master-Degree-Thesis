@@ -7,16 +7,16 @@
 \label{cap:introduction-to-iac}
 %**************************************************************
 
-\intro{An introduction to IaC. The possible approaches are presented, the advantages od using IaC, its challenges, and the evolution of the IaC with the second generation of tools}\\
+\intro{An introduction to IaC. The possible approaches are presented, the advantages of using IaC, its challenges, and the evolution of the IaC with the second generation of tools}\\
 
 %**************************************************************
 \section{Infrastructure as Code}
 
 \subsection{What is IaC}
-
 Infrastructure as Code is the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools. \\
 The IT infrastructure managed by this process comprises both physical equipment, such as bare-metal servers, as well as virtual machines, and associated configuration resources. \\
-The definitions may be in a version control system. The code in the definition files may use either scripts or declarative definitions, rather than maintaining the code through manual processes, but IaC more often employs declarative approaches. 
+The definitions may be in a version control system. The code in the definition files may use either scripts or declarative definitions, rather than maintaining the code through manual processes, but IaC more often employs declarative approaches.
+
 
 \subsubsection{Types of approaches}
 
@@ -44,23 +44,30 @@ whilst some others were executed in a different order.
 Infrastructure as Code enforces consistency by allowing users to represent infrastructure environments using code.
 Therefore, the deployment and modification of resources will always be consistent and idempotent (i.e. every time a specific operation gets executed, the same result will be generated).\\
 Furthermore, IaC tools usually offer mechanisms to enhance reusability.
+Being code, infrastructure prototypes can be programmed and shared across the various teams of the company, boosting speed and reducing costs even more.
 This feature makes your code base less verbose and more readable while at the same time team members are encouraged to apply best practices.\\
-Finally, another big advantage of IaC is collaboration.
+Moreover, another big advantage of IaC is collaboration.
 Since the infrastructure resources are defined in configuration files it means that these files can be version controlled.
 At any given time, the team is able to collaborate together in order to modify an environment and even be able to see the history (from commits) of an infrastructure resource.
-This also makes debugging much easier and accurate.
+This also makes debugging much easier and accurate.\\
+Related to this, if we create all the resources of the infrastructure using a program, we can always know what are the resources that we have on the cloud.
+On the other hand, before IaC, once the administrators created the desired resources on the service providers, there was no way to know which resources were actually present.
+Tools to inspect the state of the cloud providers were created, but their reliability is not bulletproof.
+The modern IaC approach, and especially with advanced tools as Pulumi, addressed this problem masterfully.\\
+Finally, when automation functionalities are provided with the considered IaC tool, we are given the possibility to define various branches (develop, stage, production, ecc.).
+This was not possible without IaC, the infrastructure was one and only one.
+The chance to have different branches let us test and experiment the changes of our infrastructure before actually bringing them on stage and eventually on production.\\
+
 
 
 \subsection{Challenges of IaC}
 
 While IaC offers numerous benefits, there are also several challenges that organizations must address when implementing this approach.\\
-One of the major challenges is the adoption discrepancies that arise when integrating new frameworks with existing technology. This requires careful coordination with other teams, particularly those responsible for security and compliance, and can result in difficulties in determining where resources are being delivered, controlled, and managed. To address these issues, organizations must continually communicate and audit their IaC adoption to minimize infrastructure drift and ensure that security measures remain up to date.
+One of the major challenges is the adoption discrepancies that arise when integrating new frameworks with existing technology. This requires careful coordination with other teams, particularly those responsible for security and compliance, and can result in difficulties in determining where resources are being delivered, controlled, and managed. To address these issues, organizations must continually communicate and audit their IaC adoption to minimize infrastructure drift and ensure that security measures remain up to date.\\
+Another challenge is the need for security assessment tools that can effectively evaluate the dynamic nature of IaC. Traditional security measures may require significant cycles to be integrated with IaC, and there may be a need for human checks to ensure that resources are operating correctly and being used by the appropriate applications. Organizations may need to invest in new tools or capabilities to ensure proper control and monitoring.\\
+The implementation of IaC also requires a high degree of technical competence, which can result in the need for new human capital. Senior executives may face challenges in continually investing in employee skills, particularly if the organization is in the early adoption phase. Outsourcing IaC services may be a viable option for organizations to improve automation processes in terms of cost and overall IT infrastructure quality.\\
+Versioning and traceability of settings can also be a challenge when IaC is utilized widely across an organization with various teams. As IaC becomes more complex, it can be difficult to keep track of infrastructure and identify infra-drift, making it essential to implement effective version control and tracking mechanisms.\\
 
-Another challenge is the need for security assessment tools that can effectively evaluate the dynamic nature of IaC. Traditional security measures may require significant cycles to be integrated with IaC, and there may be a need for human checks to ensure that resources are operating correctly and being used by the appropriate applications. Organizations may need to invest in new tools or capabilities to ensure proper control and monitoring.
-
-The implementation of IaC also requires a high degree of technical competence, which can result in the need for new human capital. Senior executives may face challenges in continually investing in employee skills, particularly if the organization is in the early adoption phase. Outsourcing IaC services may be a viable option for organizations to improve automation processes in terms of cost and overall IT infrastructure quality.
-
-Versioning and traceability of settings can also be a challenge when IaC is utilized widely across an organization with various teams. As IaC becomes more complex, it can be difficult to keep track of infrastructure and identify infra-drift, making it essential to implement effective version control and tracking mechanisms.
 
 
 

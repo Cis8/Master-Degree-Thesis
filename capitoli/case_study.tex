@@ -121,11 +121,11 @@ The code to the VPC resource creation API of Pulumi is done in this method of th
     });
   }
 \end{lstlisting}\mbox{}\\
-\texttt{vpc\_res} is the name that will be given by Pulumi at this resource once on the stack.
+\texttt{vpc\_res} is the name that will be given by Pulumi at this resource once on the \textit{stack}.
 We can notice how the various parameters are given in a declarative style within the curly brackets.
 Such a syntax is syntactic sugar for a Map definition.\\
 At line 8 the parent of this resource is set.
-With this specification, we are telling to the stack of Pulumi that the vpc resource \texttt{vpc\_res} that we are creating is a child resource of the VPC resource identified by the \texttt{MyVPC} class.
+With this specification, we are telling to the \textit{stack} of Pulumi that the vpc resource \texttt{vpc\_res} that we are creating is a child resource of the VPC resource identified by the \texttt{MyVPC} class.
 
 \subsection{Internet gateway creation}
 To create the internet gateway resource we can use the following code:
@@ -142,7 +142,7 @@ To create the internet gateway resource we can use the following code:
     });
   }
 \end{lstlisting}\mbox{}\\
-It is really simple since it requires just the ID of the VPC in which it has to be created and optionally a name and a parent for the Pulumi's stack representation.
+It is really simple since it requires just the ID of the VPC in which it has to be created and optionally a name and a parent for the Pulumi's \textit{stack} representation.
 
 
 \subsection{Subnets creation}
@@ -203,13 +203,13 @@ Here is the complete code of the function:
   }
 \end{lstlisting}\mbox{}\\
 In the code we instantiate private or public public subnets basing on the \texttt{isPvt} passed in the \texttt{createAZsSubnets}.
-We can notice that for the creation of a subnet we pass arguments such as \texttt{vpcId}, the availability zone name, the CIDR block, and a name (that is a tag) to better identify it on the stack.\\
+We can notice that for the creation of a subnet we pass arguments such as \texttt{vpcId}, the availability zone name, the CIDR block, and a name (that is a tag) to better identify it on the \textit{stack}.\\
 Each newly created subnet is then pushed into the class field \texttt{this.prvSubNets} or \texttt{this.pubSubNets} (that are arrays of subnets), basing on the nature of the subnet.\\
 The creation of a subnet requires us to provide both the availability zone name and the ID of the VPC.
 Since these two pieces of information are contained in two separate \texttt{Output}s (\texttt{Output<String[]>} and \texttt{Output<String>} respectively) we must first use the \texttt{pulumi.all} to wrap them in a single \texttt{Output<String[], String>}.
 This due to the fact that \texttt{.apply} can accept a single \texttt{Output<A>}, for any \texttt{A} type, value as input and not a pair.
 Then, we can use the \texttt{.apply} to unbox from the \texttt{Output<String[], String>} its inner value.
-Now that we have both the pieces of information out of the context value, we can use them to create the subnets.\\
+Now that we have both the pieces of information out of the \textit{context} value, we can use them to create the subnets.\\
 %The \texttt{this.pubSubNets} will be used by the \texttt{this.attachRouteTableToPubSubnets()} function to bind the public subnets to the internet gateway through the routing table.\\
 %The crucial point here is that in order to bind the public subnets to the routing table, we must call \texttt{this.attachRouteTableToPubSubnets()} as the last step in our \texttt{pulumi.all} function call.
 %This ensures that we have all the necessary subnets to make the binding, since the call will be done at the completion of the creation of the subnets.
@@ -262,7 +262,7 @@ Here is the code of the function:
     });
   }
 \end{lstlisting}\mbox{}\\
-Here we used once more, as for the subnets creation, a combination of \texttt{.apply} and a foreach to iterate over all the extracted subnets (\texttt{.foreach}) from the Output context (\texttt{.apply}).\\
+Here we used once more, as for the subnets creation, a combination of \texttt{.apply} and a foreach to iterate over all the extracted subnets (\texttt{.foreach}) from the \texttt{Output} \textit{context} (\texttt{.apply}).\\
 Inside the \texttt{foreach}'s lambda we are defining a new \texttt{RouteTableAssociation} AWS EC2 resource that requires just the id of the subnet and the id of the routing table to which we want to attach the subnet to.
 
 \section{Creating the resources with Pulumi}
@@ -283,7 +283,7 @@ We can notice how the resources created are nested into each other thanks to the
 This is helping us in keeping our resources on the stuck nicely ordered and tied up.\\
 
 \section{Destroying the resources with Pulumi}
-Now lets use the \texttt{pulumi destroy} command to destroy the resources on our Pulumi's stack.
+Now lets use the \texttt{pulumi destroy} command to destroy the resources on our Pulumi's \textit{stack}.
 The preview of the changes that we are about to get look like this:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/pulumi_destroy_1} 
@@ -307,9 +307,9 @@ Such syntactic sugar will be based on the Pulumi Java's APIs and will provide to
 The steps of the work done have been the followings:
 \begin{enumerate}
   \item manually write the \textit{sugarized} functions to create the Pulumi resources using Scala
-  \item use such functions to recreate the Stack obtained with the typescript solution shown before in the \hyperref[sec:typescript-impl]{Typescript implementation of the case study} section
+  \item use such functions to recreate the \textit{stack} obtained with the typescript solution shown before in the \hyperref[sec:typescript-impl]{Typescript implementation of the case study} section
   \item create an automatic code generator for our syntactic sugar functions, so that we can quickly create a library for Scala's Pulumi APIs
-  \item try to recreate the stack with the automatically generated code
+  \item try to recreate the \textit{stack} with the automatically generated code
 \end{enumerate}
 Obviously, the third step is quite wide, and if fact with my work I had the time to generate only the functions for a part of the Java's Pulumi APIs for the AWS EC2 module.\\
 Now the just defined steps will more accurately presented.
@@ -330,7 +330,7 @@ In Java, to instantiate such a resource we'd call:
 \end{lstlisting}\mbox{}\\
 We can (hardly) see that along with the name to be assigned to the vpc "my-vpc-java", a VpcArgs builder and a CustomResourceOptions builder are passed by.
 These builders will create an instance of the respective classes that will be used to set respectively the parameters and the parent of the Vpc resource.
-So, for our case study we need to consider: the name to be assigned at the created resource on the Pulumi stack, the builder of the respective \texttt{Args} class of the resource, and the \texttt{CustomResourceOptions} builder.
+So, for our case study we need to consider: the name to be assigned at the created resource on the Pulumi \textit{stack}, the builder of the respective \texttt{Args} class of the resource, and the \texttt{CustomResourceOptions} builder.
 
 
 \subsection{Syntactic sugar usage}
@@ -353,7 +353,7 @@ This is how a Vpc resource can be created with my syntactic sugar:
 \end{lstlisting}\mbox{}\\
 At line 1, the \texttt{vpc} function is the actual \textit{sugarized} function for the VPC resource constructor.
 In fact we can notice that we have a curried function.
-The first parentheses is taking the parameter for the resource name on the Pulumi stack, while the second one is containing two lambdas (defined by the curly brackets).
+The first parentheses is taking the parameter for the resource name on the Pulumi \textit{stack}, while the second one is containing two lambdas (defined by the curly brackets).
 These lambdas are respectively used to call all the builder methods of the \texttt{VcpArgs} class and the ones for the \texttt{CustomResourceOptions}.\\
 We can notice that we didn't explicitly defined an instance of the builders of such classes.
 We will soon see how we achieved such a syntactic sugar trick.\\
@@ -415,7 +415,7 @@ Much different from the other resources is the function to create the subnets:
 \end{lstlisting}\mbox{}\\
 We can notice here how we had the possibility to use the \texttt{map} function on \texttt{availabilityZonesNames()}.
 \texttt{availabilityZonesNames()} returns a \texttt{Output[GetAvailabilityZonesResult]} value, that isn't directly accessible from the \texttt{map} function.
-To achieve such a result we made a monad out of the \texttt{Output} type, so that map can be applied on the inner value of the \texttt{Output} context.
+To achieve such a result we made a monad out of the \texttt{Output} type, so that map can be applied on the inner value of the \texttt{Output} \textit{context}.
 We'll see better how is the actual implementation of the monad soon.\\
 The for yield construct here is iterating over a zipped list made out of the availability zones names and the CIDR blocks for the respective kind of subnet to create (private or public, based on the input parameter isPvt).
 The for yield, for each tuple \texttt{(name, cidr)} will create a \texttt{Subnet} value and will return a \texttt{Subnet[]} as output.
@@ -444,7 +444,7 @@ Since the logic is analogous we won't comment this code further, but the fact we
 
 \subsubsection{Resources creation with pulumi up}
 \label{sssec:res-cre-ts}
-Now lets make sure that the stack created with \texttt{pulumi up} is the same of the one created with the typescript implementation.
+Now lets make sure that the \textit{stack} created with \texttt{pulumi up} is the same of the one created with the typescript implementation.
 From this image we can see that they are equivalent to the ones shown in \hyperref[sssec:res-cre-ts]{Resources creation with pulumi up in Typescript}:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/pulumi_up_scala_result} 
@@ -466,12 +466,12 @@ Consider the vpc function of the syntactic sugar defined inside the "PulumiUtilF
 \end{lstlisting}\mbox{}\\
 Lets analyze the function by steps.
 First of all we can see that the function declaration is curried, we have 2 parentheses with different input parameters.\\
-The first parentheses take simply a string parameter, that is used to set the name of the \texttt{Vpc} resource on the Pulumi stack.\\
+The first parentheses take simply a string parameter, that is used to set the name of the \texttt{Vpc} resource on the Pulumi \textit{stack}.\\
 The second parentheses are taking two lambdas as parameters: a \texttt{VcpArgs.Builder ?=> Unit}  and a \texttt{CustomResourceOptions.Builder ?=> Unit}, with default parameter baseOpts, that we'll see in a moment what is.\\
 In Scala, a lambda that takes an Int and returns a String has this type notation: \texttt{Int => String}, so does that '\texttt{?}' in front of the '\texttt{=>}' mean?\\
-Such '\texttt{?=>}' is denoting a context function, that is a function with (only) context parameters.
+Such '\texttt{?=>}' is denoting a \textit{context} function, that is a function with (only) \textit{context} parameters.
 In the \hyperref[par:given-using]{Given and using keywords} paragraph we introduced the \texttt{using} keyword.
-Such '\texttt{?}' is quite analogous to a \texttt{using} keyword used to mark an function's input parameter as a context parameter.
+Such '\texttt{?}' is quite analogous to a \texttt{using} keyword used to mark an function's input parameter as a \textit{context} parameter.
 This is, in part, what let us call the builder methods like \texttt{cidrBlock("10.136.0.0/24")} and \texttt{tags("Name" -> "myVpcScala")} (as shown in the code shown in the \hyperref[sssec:vpc-creation-scala]{Vpc creation in Scala} paragraph)
 without having to call them on a specific builder instance.
 We will get the whole picture of this trick when we'll talk about the syntactic sugar for the builder methods in the \hyperref[ssec:syn-sug-builders]{Syntactic sugar for the builders' methods} paragraph.
@@ -482,8 +482,8 @@ To have a better idea to what these parameters refer in our VCP creation case, c
   \includegraphics[width=1.3\columnwidth]{case_study/vpc_params_boxes} 
   \captionof{figure}{Parameters correspondence}
 \end{center}\mbox{}\\
-The red box represents the name for our VPC resource on the Pulumi stack.\\
-The green one, with the curly brackets, is the lambda that takes a \textit{given} \texttt{VpcArgs.Builder} as an implicit parameter from the context.
+The red box represents the name for our VPC resource on the Pulumi \textit{stack}.\\
+The green one, with the curly brackets, is the lambda that takes a \textit{given} \texttt{VpcArgs.Builder} as an implicit parameter from the \textit{context}.
 In fact we are not providing any explicitly.
 The \texttt{given b} defined in the first line of the body of the \texttt{vpc} function is the instantiation of a \textit{given} instance of such a builder, that will be automatically injected by the compiler in the \texttt{init} lambda represented by the green box.\\
 Analogous is the concept for the blue box.\\
@@ -542,7 +542,7 @@ To be precise we are referring to these methods:
   \captionof{figure}{vpc methods}
 \end{center}\mbox{}\\
 Once such a lambda will be invoked inside the vpc function itself, these methods will be executed, but on which builder?\\
-We already mentioned the fact that inside the vpc function a context instance of the VpcArgs.Builder is initialized and the \texttt{init} lambda is able to use it as input parameter thanks to the '\texttt{?=>}' operator we have seen.
+We already mentioned the fact that inside the vpc function a \textit{context} instance of the VpcArgs.Builder is initialized and the \texttt{init} lambda is able to use it as input parameter thanks to the '\texttt{?=>}' operator we have seen.
 But how can the actual \texttt{cidrBlock} and \texttt{tags} methods know on which builder they are being invoked?\\
 Without surprise, those methods take the \texttt{VpcArgs.Builder} builder as an implicit parameter with the \texttt{using} keyword.\\
 This is the signature for the \texttt{cidrBlock} method in the syntactic sugar file named "PulumiBuilderUtilFunctionsForScala.scala":
@@ -690,7 +690,7 @@ As for the \texttt{Functor}, the \texttt{Monad} trait has been defined:
       def map[B](f: A => B) = x.flatMap(f.andThen(pure))
 \end{lstlisting}\mbox{}\\
 A monad, to be called so, must define a \texttt{pure} function.
-I remind that such a method puts a value inside a context.\\
+I remind that such a method puts a value inside a \textit{context}.\\
 Then the \texttt{faltMap}, that is the other method required from a monad, is defined as an extension method.\\
 The \texttt{map} method instead can be now be redefined using \texttt{flatMap}.
 This is letting us not depend any more on the \texttt{.applyValue} from the Pulumi libraries for Java, because we can now use flatMap to achieve the desired result.\\
@@ -702,7 +702,7 @@ The monad for the \texttt{Output} type is implemented in this way:
       def flatMap[B](f: A => Output[B]): Output[B] = oa.apply(f.asJava)
 \end{lstlisting}\mbox{}\\
 The pure method is defined with the Java's Pulumi method \texttt{of}.
-It simply boxes the value in an \texttt{Output} context.\\
+It simply boxes the value in an \texttt{Output} \textit{context}.\\
 The \texttt{flatMap} function for the \texttt{Output[A]} type is implemented using the \texttt{.apply} function offered from the Pulumi's Java Output class.
 The \texttt{apply} function has a different type from the \texttt{applyValue} one.
 As we have seen above, \texttt{applyValue} is matching with the type of \texttt{map}, while the \texttt{apply} has the following signature: \texttt{<U> Output<U> apply(Function<T, Output<U>> func)}.

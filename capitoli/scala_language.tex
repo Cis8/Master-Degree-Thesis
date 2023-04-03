@@ -7,7 +7,7 @@
 \label{cap:scala-language}
 %**************************************************************
 
-\intro{Scala brief ovreview}\\
+\intro{Scala brief overview. First the language paradigms are introduced, and then the functionalities used for the thesis are introduced and explained}\\
 
 %**************************************************************
 \section{Introduction to Scala}
@@ -29,14 +29,14 @@ Singleton objects provide a convenient way to group functions that aren't member
 For the work of the thesis, Scala 3 has been used.
 
 \subsubsection{Higher order functions and currying}
-Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful syntactic sugar for the declaration of AWS \gls{EC2} IaC resources in a 
+Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful syntactic sugar for the declaration of AWS EC2 IaC resources in a 
 concise and elegant way.
 \paragraph{Higher order functions}
 An higher order function is function that either takes one or more functions as arguments or returns a function as return value, or both of them.
-Such a feature is at the basis of the functional programming paradigm since it lets concatenates function and create more complex and more powerful abstract constructs such as functors, applicatives and monads, so that we can eventually work on data in an immutable, and then safe, way.
+Such a feature is at the base of the functional programming paradigm since it lets concatenate functions and create more complex and more powerful abstract constructs, such as functors, applicatives, and monads, to eventually work on data in an immutable and safe way.
 We'll see more about functors and monads in the \hyperref[sssec:functors-monads]{Functor and monads} paragraph.
 \paragraph{Currying}
-Currying is the transformation of a function with multiple arguments into a sequence of single-argument functions. That means, converting a function like \texttt{f(a, b, c, ...)} into a function like \texttt{f(a)(b)(c)...}.
+Currying is the transformation of a function with multiple arguments into a sequence of single-argument functions. That means, converting a function like \texttt{f(a, b, c, ...)} into a function like \texttt{f(a)(b)(c)...}.\\
 To give a more detailed example let's consider the following function in Scala:
 \begin{verbatim}
   def sum(a: Int, b: Int) : Int = 
@@ -55,7 +55,7 @@ The returned function will be analogous to this function:
   def csum1(b: Int) : Int = 
     1 + b
 \end{verbatim}\mbox{}\\
-So the currying is letting us define and use partial functions, and this feature, combined with the feature of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
+So the currying is letting us define and use partial functions, and this feature, combined with the chance of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
 
 \subsubsection{Pattern matching}
 Pattern matching is a mechanism for checking a value against a pattern.
@@ -103,7 +103,7 @@ We shall notice that such extension methods are letting us extend types without 
 \label{par:given-using}
 \texttt{given} has different usages, but we are interested into its capability to automatically construct an instance of a certain type and make it available to contexts in which we are expecting an implicit parameter.
 To mark a parameter as implicit we have to use the keyword \texttt{using}.
-Doing so, a \texttt{given} variable with a matching type to the implicit parameter's one, if present in the scope, will be automatically injected in \textbf{at compile time}.\\
+Doing so, a \texttt{given} variable with a type matching to the implicit parameter's one, if present in the scope, will be automatically injected in \textbf{at compile time}.\\
 Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-given-using/}{Given and Using Clauses in Scala 3 - Rock the JVM} to better understand such concepts:
 \begin{verbatim}
   given personOrdering: Ordering[Person] with {
@@ -122,7 +122,8 @@ Now, when we'll have to call such a function, it'll require us to just pass the 
   // the compiler will inject the ordering at the end of following function call
   listPeople(List(Person("Weasley", "Ron", 15), Person("Potter", "Harry", 15)))
 \end{verbatim}\mbox{}\\
-This is a key functionality that, among with other Scala features, will let us achieve our goal in our thesis as we will see in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+This is a key functionality that, among with other Scala features, will let us achieve the goal of the thesis.
+% as we will see in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter
 
 
 \subsubsection{Traits}
@@ -151,9 +152,9 @@ In Scala is possible to extend from 0 or 1 abstract classes and as many traits w
 \subsubsection{Functors and monads}
 \label{sssec:functors-monads}
 \paragraph{Functors}
-A Functor for a type provides the ability for its values to be "mapped over", i.e., apply a function that transforms the value contained in a given context while remembering its shape.
+A Functor for a type provides the ability for its values to be "mapped over", i.e., apply a function that transforms the value contained in a given \textit{context} while remembering its shape.
 We can represent all types that can be "mapped over" with \texttt{F}.
-F it's a type constructor: the type of its values becomes concrete when provided a type argument.
+\texttt{F} it's a type constructor: the type of its values becomes concrete when provided a type argument.
 Therefore we write it \texttt{F[\_]}, hinting that the type F takes another type as argument.
 The definition of a generic \texttt{Functor} would thus be written as:
 \begin{verbatim}
@@ -174,14 +175,14 @@ Lets consider now the following usage of the \texttt{map} extension method on a 
   val l: List[Int] = List(1, 2, 3)
   l.map(x => x  * 2) // the output is List(2, 4, 6)
 \end{verbatim}\mbox{}\\
-The map method is now directly used on l. It is available as an extension method since \texttt{l}'s type is List[Int] and a given instance for Functor[List], which defines map, is in scope (thanks to the \texttt{given} keyword).
+The map method is now directly used on \texttt{l}. It is available as an extension method since \texttt{l}'s type is \texttt{List[Int]} and a given instance for \texttt{Functor[List]}, which defines map, is in scope (thanks to the \texttt{given} keyword).
 
 \paragraph{Monads}
-A \texttt{Monad} provides the ability to sequence operations on values of a given type while maintaining the context of each operation.
-It is a generalization of the \texttt{Functor} concept, which allows us to apply a function to a value in a context.
+A \texttt{Monad} provides the ability to sequence operations on values of a given type while maintaining the \textit{context} of each operation.
+It is a generalization of the \texttt{Functor} concept, which allows us to apply a function to a value in a \textit{context}.
 Such a generalization is letting us achieve a new level of expressiveness, that can be summarized as the chance to chain operations on a monadic value.\\
 Like \texttt{Functors}, \texttt{Monads} can be represented by a type constructor \texttt{M[\_]} that takes another type as an argument.
-The definition of a Monad is typically given in terms of two operations: \texttt{pure}, which lifts a value into the monadic context, and \texttt{flatMap}, which sequences operations on values in the context.\\
+The definition of a Monad is typically given in terms of two operations: \texttt{pure}, which lifts a value into the monadic \textit{context}, and \texttt{flatMap}, which sequences operations on values in the \textit{context}.\\
 A generic Monad can be defined as follows:
 \begin{verbatim}
   trait Monad[M[_]] extends Functor[M] {
@@ -204,14 +205,14 @@ To conclude consider this example on Lists:
   val ys = List(4, 5, 6)
   xs.flatMap(x => ys.map(y => x + y)) // List(5, 6, 7, 6, 7, 8, 7, 8, 9)
 \end{verbatim}\mbox{}\\
-The fact we got a List[Int] as return type from the flatMap operation is letting us the chance to apply immediately after another operation on such a value.
-Differently, if we use map on xs, we will obtain the following result:
+The fact we got a \texttt{List[Int]} as return type from the \texttt{flatMap} operation is letting us the chance to apply immediately after another operation on such a value.
+Differently, if we use \texttt{map} on \texttt{xs}, we will obtain the following result:
 \begin{verbatim}
   val xs = List(1, 2, 3)
   val ys = List(4, 5, 6)
   xs.map(x => ys.map(y => x + y)) // List(List(5, 6, 7), List(6, 7, 8), List(7, 8, 9))
 \end{verbatim}\mbox{}\\
-that is of type List[List(Int)]. With this new type, we might have troubles in chaining operations since the data structure has changed.
+that is of type \texttt{List[List(Int)]}. With this new type, we might have troubles in chaining operations since the data structure has changed.
 %The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
 
       
