@@ -16,7 +16,7 @@ Pulumi provides a programming model that allows developers to use familiar langu
 In fact, it belongs to the second generation tools of the IaC.\\
 As already mentioned in the \hyperref[cap:introduction-to-iac]{Introduction to Infrastructure as Code} chapter, such an approach, makes it easier to automate the deployment and management of infrastructure and applications, as well as to collaborate across teams and projects.\\
 Pulumi is innovative because, differently from most of all the other second generation IaC tools, has been able to abstract the problem of having many different cloud providers, and also of really different natures (such as Kubernetes vs AWS).
-Its solution is letting the user use a single IaC platform to manage any kind of resource on any cloud provider.
+Its solution is letting the user rely on a single IaC platform to manage any kind of resource on any cloud provider.
 Potentially, Pulumi could support any technolgy that is showing \gls{REST API}s.
 This feature is making Pulumi an innovative IaC platform that rise IaC on a new level.\\
 Pulumi offers a range of tools and features to simplify the development and management of cloud infrastructure, including version control, testing, monitoring, and security.
@@ -33,6 +33,7 @@ and at the same time offer different programming paradigms to choose from, so th
 Finally, Pulumi comes with a range of integrated tools and features, such as automatic parallelism, drift detection, and \textit{stack} references, making it easier to manage complex infrastructure and deployments.
 
 \section{Pulumi functioning}
+\label{sec:pulumi-functioning}
 
 \subsection{Overview of the functioning}
 Pulumi functioning is based on the interoperation of three main parts:
@@ -50,7 +51,7 @@ If it is not the case, the resources are modified in order to be aligned with th
 \subsection{Pulumi project}
 The interesting part for the user is the Pulumi project.
 Such a project, that can be created with the \texttt{pulumi new} command, can be any folder that contains a Pulumi.yaml file.
-This file specifies the runtime to be used (nodejs, pyhton, Java, ecc.) and where to look for the program that should be executed during deployments.\\
+This file specifies the runtime to be used (nodejs, pyhton, Java,etc.) and where to look for the program that should be executed during deployments.\\
 The execution of the program will, through the Pulumi APIs, call the Pulumi engine to create the desired resources on the respective cloud providers.
 
 \subsection{The stack}
@@ -67,8 +68,8 @@ Once the \textit{stack} is defined, you write code that implements the resource 
 Pulumi provides libraries for several programming languages, including TypeScript, Python, Go, .NET, and partially Java.
 You use these libraries to create and configure cloud resources.\\
 In Pulumi, you define resources using a the respective resource constructor functions.
-This function takes in the configuration for the resource as input, and returns a reference to the newly-created resource.
-This reference can then be used to manage the resource throughout its lifecycle.\\
+This function takes in the configuration for the resource as input, and returns a reference to the resource to be created.\\
+%This reference can then be used to manage the resource throughout its lifecycle.\\
 Pulumi code can also contain logic for managing relationships between resources.
 For example, you can specify that one resource depends on another, so that Pulumi knows to create the dependent resource first.
 
@@ -76,7 +77,7 @@ For example, you can specify that one resource depends on another, so that Pulum
 Once the code is written, you use Pulumi to create the cloud resources specified in the \textit{stack} definition.
 Pulumi uses the provider cloud API to create the resources and corresponding configurations. 
 The resource creation process is declarative, which means that Pulumi automatically figures out the order in which resources should be created based on their dependencies.\\
-Pulumi also supports continuous delivery, meaning that changes to your code are automatically detected and used to update existing resources.
+%Pulumi also supports continuous delivery, meaning that changes to your code are automatically detected and used to update existing resources.
 When a change is detected, Pulumi compares the desired state (based on your code) to the current state (based on the resources in the cloud) and makes any necessary changes to bring the resources into compliance with the desired state.
 
 \subsection{Viewing resources state}
@@ -103,4 +104,4 @@ Pulumi addresses such a problem with the \texttt{Output} type.\\
 In Pulumi, \texttt{Output} values are typically computed asynchronously, so that they can represent resources that are being provisioned by cloud providers.
 Like a future, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
 This feature will come handy to chain the definition of resources that depends on other resources.\\
-We'll see how to create a Monad out of the \texttt{Output} type so that we'll be able to boost our syntactic sugar in the Scala version of the case study.
+We'll see how to create a Monad out of the \texttt{Output} type so that we'll be able to boost our \textit{syntactic sugar} in the Scala version of the case study.

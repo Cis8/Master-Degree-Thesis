@@ -10,10 +10,36 @@
 %\intro{Scala brief overview}\\
 
 %**************************************************************
+%\section{The innovation brought to IaC solutions by Pulumi}
+%The work done with Pulumi made me comprehend the potential of this modern technology.
+
+
 \section{The potential of Scala for Pulumi}
-Scala's functional paradigm is matching very well the declarative approach of Pulumi.
-Therefore, the higher order functions, the currying, and the monad for the \texttt{Output} type, along with the modern features offered by the Scala language such as the \texttt{using} and \texttt{given} keywords, has let us create an expressive, concise, and readable syntactic sugar for our Scala Pulumi APIs.\\
-Pulumi offers good challenges for the programming languages when it comes to declare resources that depends on other resources.
-Scala is able to keep up with these challenges, in fact its design features are letting us work perfectly with Pulumi without having to resort to ad-hoc functions created to compensate other languages' shortcoming, such as the \texttt{pulumi.all} function.\\
-In my opinion, a further extension of the work done for the support of Scala in Pulumi would be a great addition to the currently supported languages.
-If possible, a official support of Scala for Pulumi would be much appreciated from the community.
+Typescript's high readability is a really appreciated feature when it comes define resources with Pulumi.
+Its declarative nature is marvelously fitting with the declarative approach chosen from Pulumi, but yet some language limitations require the user to resort to suboptimal solutions that are less readable and concise.
+The challenges posed by Pulumi while having to define resources that depends on other resources required Typescript to resort on the \texttt{pulumi.all} function to get the work done.
+These kind of patches are used when the limited Expressiveness of a language reach its limits.\\
+Scala is instead a modern language with powerful and flexible characteristics.
+The focus of the work was to design some Scala APIs for Pulumi in order to obtain the same Typescript readability while bringing along all the cool features of the Scala language and its functional paradigm.\\
+The tricky part of the work was to find a way to turn all the complexity of the language, and hence its more verbose nature, in a readable and concise solution.
+Its complexity turned out to be the key for the goal.
+Thanks to powerful characteristics such as the currying, the implicit parameters and the monads, the definition of cool \textit{syntactic sugar} functions was made possible.
+The \textit{sugared} functions turned out to be really readable and expressive.
+Hence, where Typescript failed due to its lack of expressiveness, Scala succeeded relying exclusively on its own features and characteristics.
+In fact we might consider the fact that Scala is a strongly typed language, while Typescript uses the duck typing.
+This means that the Scala solution won't have any type error at compile time, granting a more robust solution.\\
+Furthermore, the Scala version turned out to be, sometimes, even more concise than the Typescript solution.\\
+
+
+\section{Future improvements}
+The work done with my thesis was able to analyze only some of the many challenges that Pulumi has to offer to the various programming languages while defining a solution for a given use case.
+Yet, the results obtained wanted to show that the flexibility of Scala can potentially address any kind of difficulty encountered.
+Therefore, a further extension of the work done to investigate supplementary possibilities offered by this language with Pulumi would be interesting.\\
+If possible, an official and complete support of Scala for Pulumi would be, in my opinion, a fantastic addition to the roster of languages of Pulumi.
+
+%Scala's functional paradigm is matching very well the declarative approach of Pulumi.
+%Therefore, the higher order functions, the currying, and the monad for the \texttt{Output} type, along with the modern features offered by the Scala language such as the \texttt{using} and \texttt{given} keywords, has let us create an expressive, concise, and readable \textit{syntactic sugar} for our Scala Pulumi APIs.\\
+%Pulumi offers good challenges for the programming languages when it comes to declare resources that depends on other resources.
+%Scala is able to keep up with these challenges, in fact its design features are letting us work perfectly with Pulumi without having to resort to ad-hoc functions created to compensate other languages' shortcoming, such as the \texttt{pulumi.all} function.\\
+%In my opinion, a further extension of the work done for the support of Scala in Pulumi would be a great addition to the currently supported languages.
+%If possible, a official support of Scala for Pulumi would be much appreciated from the community.

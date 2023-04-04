@@ -7,15 +7,16 @@
 \label{cap:comparisons}
 %**************************************************************
 
-\intro{Here all the advantages and disadvantages detected while using Typecript and Scala for our case study will be presented.}\\
+\intro{Here all the advantages and disadvantages detected while using Typecript and Scala for our case study will be presented}\\
 
 %**************************************************************
 \section{Code readability in Typescript vs in Scala}
 
 \subsection{Readability in Typescript}
-Typescript is less verbose than many other programming languages.
+Typescript's programs have a really readable code.
 In the implementation we can appreciate how the passing of the builders methods' parameters have been achieved in a concise way using the JSON format.
-This is fitting very well in a declarative approach and is very readable and intuitive, but some lacks of the language caused the code to lose readability and conciseness.
+This is fitting very well in a declarative approach, granting compact code solutions. 
+On the other hand, some lacks of the language caused the code to lose part of the readability and conciseness.\\
 
 \subsubsection{Less readable code with pulumi.all and .apply}
 \label{sssec:ts-subnets-comparison}
@@ -27,15 +28,17 @@ Lets consider once again the Typescript version of the function that is responsi
 When talking about readability, the \texttt{pulumi.all} and the \texttt{apply} functions are quite cryptic.
 It takes us a little time to understand what are the return types of the \texttt{pulumi.all} and of the \texttt{apply} functions.
 I remind here that the types of these two functions are fully explained in the \hyperref[par:ts-lambda]{The apply's lambda} paragraph.\\
-We'll make furthers considerations on this function in the \hyperref[sssec:readability-for-yield]{Readability of the Scala's for yield vs pulumi.all and .apply} paragraph.
+We'll make further considerations on this function in the \hyperref[sssec:readability-for-yield]{Readability of the Scala's for-yield vs pulumi.all and .apply} paragraph.
 
 \subsection{Readability in Scala}
-Also in Scala, thanks to the syntactic sugar used, we achieved a surprisingly readable code while defining the resources to be created on our Pulumi \textit{stack}.
+Scala is in general more verbose than Typescript, but the extreme flexibility of the language let us define a powerful \textit{syntactic sugar} that allowed for a even more readable and concise solution compared to the Typescript one.
+The combination of the various features, among which we can find currying, \texttt{using} and \texttt{given} keywords, and the monads, grant Scala the possibility to define \gls{internal DSL}s.
+Thanks to this characteristic, also in Scala I achieved a surprisingly readable code while defining the resources to be created on our Pulumi \textit{stack}.
 
 \subsubsection{Function currying}
-The currying of Scala used to define our \textit{sugarized} functions granted us the possibility to declare the resources with this syntax:
+The currying of Scala used to define our \textit{sugared} functions granted us the possibility to declare the resources with this syntax:
 \begin{verbatim}
-  val resourceName = sugarizedResourceConstructor("res-name") {
+  val resourceName = sugaredResourceConstructor("res-name") {
     firstParameter(...)
     secondParameter(...)
     ...
@@ -47,14 +50,17 @@ This code is really readable (it resembles to a function definition) and is perf
 Thanks to the \texttt{given} and \texttt{using} keywords, builders aren't manually instantiated and we don't require to explicitly say on which builder instance we are calling the builders' methods.
 This is letting us have an even more lightweight code that is really just focusing on what we need to instantiate instead of the how we could instantiate it.
 Let's consider the VPC creation in our Scala solution and how would it is it created instead in a Java solution.\\
-Scala solution:
+Scala solution:\\
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
   val myVpc = vpc("scala-main") {
     cidrBlock("10.136.0.0/24")
     tags("Name" -> "myVpcScala")
   }
-\end{lstlisting}\mbox{}\\
-Java solution:
+\end{lstlisting}
+\end{minipage}
+Java solution:\\
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
   protected Vpc vpc = new Vpc("my-vpc-java", VpcArgs.builder()
     .cidrBlock("10.136.0.0/24")
@@ -64,8 +70,9 @@ Java solution:
           CustomResourceOptions.builder()
                   .parent(this)
                   .build());
-\end{lstlisting}\mbox{}\\
-Even if our syntactic sugar is using the very same APIs used from the Java's solution, the readability and the conciseness are entirely on another level.
+\end{lstlisting}
+\end{minipage}
+Even if our \textit{syntactic sugar} is using the very same APIs used from the Java's solution, the readability and the conciseness are entirely on another level.
 
 \subsubsection{Implicit conversion functions to get rid of Map and List constructors while passing a single value}
 The implicit conversion functions presented in the \hyperref[sssec:implicit-converion-functions]{Implicit conversion functions} paragraph let us get rid of the constructor of the Map and of the List if we're interested in passing a single value.\\
@@ -137,7 +144,7 @@ Moreover, the \texttt{map} function is much more intuitive to an user rather tha
 
 %\section{My Scala solution observations}
 
-%\subsection{Advantages of using my Scala syntactic sugar}
+%\subsection{Advantages of using my Scala \textit{syntactic sugar}}
 
 %\subsubsection{Very concise code}
 
@@ -145,7 +152,7 @@ Moreover, the \texttt{map} function is much more intuitive to an user rather tha
 
 %\subsubsection{More powerful constructs thanks to the for-comprehension and the monads to act on groups of Outputs}
 
-%\subsection{Disadvantages of using my Scala syntactic sugar}
+%\subsection{Disadvantages of using my Scala \textit{syntactic sugar}}
 
 %\subsubsection{Partial solution, not all the corner cases have been considered}
 

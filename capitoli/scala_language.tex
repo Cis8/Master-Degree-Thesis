@@ -3,7 +3,7 @@
 % !TEX root = ../tesi.tex
 
 %**************************************************************
-\chapter{Scala, a modern functional and object-oriented programming language}
+\chapter{Scala: modern, functional and object-oriented}
 \label{cap:scala-language}
 %**************************************************************
 
@@ -29,7 +29,7 @@ Singleton objects provide a convenient way to group functions that aren't member
 For the work of the thesis, Scala 3 has been used.
 
 \subsubsection{Higher order functions and currying}
-Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful syntactic sugar for the declaration of AWS EC2 IaC resources in a 
+Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful \textit{syntactic sugar} for the declaration of AWS EC2 IaC resources in a 
 concise and elegant way.
 \paragraph{Higher order functions}
 An higher order function is function that either takes one or more functions as arguments or returns a function as return value, or both of them.
@@ -55,7 +55,7 @@ The returned function will be analogous to this function:
   def csum1(b: Int) : Int = 
     1 + b
 \end{verbatim}\mbox{}\\
-So the currying is letting us define and use partial functions, and this feature, combined with the chance of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
+So the currying is letting us define and use partial functions, and this feature, combined with the chance of taking functions as parameters, will be a key ingredient for the highly expressive and readable solution achieved and proposed in the \hyperref[cap:case-study]{AWS EC2 resources generation with Pulumi} chapter.
 
 \subsubsection{Pattern matching}
 Pattern matching is a mechanism for checking a value against a pattern.
@@ -77,7 +77,7 @@ Let's now consider the following example, taken from \href{https://docs.scala-la
 \end{verbatim}\mbox{}\\
 We can notice how we are applying the pattern matching on the variable \texttt{device} to have a different behavior on the base of its actual type.
 This is useful when the case needs to call a method on the pattern.
-In fact, we'll see in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
+In fact, we'll see in the \hyperref[cap:case-study]{AWS EC2 resources generation with Pulumi} chapter how this feature of Scala will be used to achieve our solution.\\
 Obviously, in such an example, the right-hand side of the various cases must have a valid return type with respect to the return type given in the declaration of the method, that in this case is \texttt{String}.
 
 \subsubsection{Extension methods}
@@ -203,17 +203,19 @@ To conclude consider this example on Lists:
 \begin{verbatim}
   val xs = List(1, 2, 3)
   val ys = List(4, 5, 6)
-  xs.flatMap(x => ys.map(y => x + y)) // List(5, 6, 7, 6, 7, 8, 7, 8, 9)
+  xs.flatMap(x => ys.map(y => x + y))
+  // List(5, 6, 7, 6, 7, 8, 7, 8, 9)
 \end{verbatim}\mbox{}\\
 The fact we got a \texttt{List[Int]} as return type from the \texttt{flatMap} operation is letting us the chance to apply immediately after another operation on such a value.
 Differently, if we use \texttt{map} on \texttt{xs}, we will obtain the following result:
 \begin{verbatim}
   val xs = List(1, 2, 3)
   val ys = List(4, 5, 6)
-  xs.map(x => ys.map(y => x + y)) // List(List(5, 6, 7), List(6, 7, 8), List(7, 8, 9))
+  xs.map(x => ys.map(y => x + y))
+  // List(List(5, 6, 7), List(6, 7, 8), List(7, 8, 9))
 \end{verbatim}\mbox{}\\
 that is of type \texttt{List[List(Int)]}. With this new type, we might have troubles in chaining operations since the data structure has changed.
-%The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{Study case: AWS EC2 resources generation with Pulumi} chapter.
+%The \texttt{Output} type will be explained in the \hyperref[cap:case-study]{AWS EC2 resources generation with Pulumi} chapter.
 
       
 
@@ -233,10 +235,11 @@ To better understand how the for comprehension concept works lets consider a bri
     x <- xs
     y <- ys
   } yield s"$x $y"
-  // List("foo hello", "foo world", "bar hello", "bar world", "baz hello", "baz world")
+  // List("foo hello", "foo world", "bar hello", 
+          "bar world", "baz hello", "baz world")
 \end{verbatim}\mbox{}\\
 We can notice how we are iterating on the two lists to generate a List of string as result, made of the combinations of the two lists' elements.\\
-The for yield construct, in combination with the \texttt{Monads}, will be a key feature to improve our Scala syntactic sugar for the Pulumi APIs.
+The for yield construct, in combination with the \texttt{Monads}, will be a key feature to improve our Scala \textit{syntactic sugar} for the Pulumi APIs.
 
 \subsubsection{Union type}
 \label{sssec:union}
