@@ -13,21 +13,34 @@
 \let\cleardoublepage\relax
 \let\cleardoublepage\relax
 
-\chapter*{Abstract}
+\chapter{Abstract}
 
-\intro{Automation of cloud resources creation using the lightweight syntax offered by Scala: a robust and modern programming language}\\
+\intro{Scala as a candidate to address the problem of the always more complex management of the cloud infrastructure}\\
 
-
-The document describes the work done from the graduating Cisotto Emanuele, in collaboration with Zoleo Andrea, from the Kynetics Srl company.
-The objectives to achieve were many.\\
-First, the study of the basics of the functioning of the Pulumi technology and the Scala language was made.\\
-Second, a definition of a case study based on some \gls{AWS} \gls{EC2} resources was done. Hence, the respective implementation using Pulumi and the Typecript language has been done.\\
-Then, after having identified the shortcomings of Pulumi with the Typescript language, a \textit{syntactic sugar} for the Scala support for Pulumi has been manually coded.
-Such a \textit{syntactic sugar} for Scala is based on the Java APIs for Pulumi.\\
-At that point, the same case study has been implemented with the newly created Scala APIs for Pulumi.\\
-Thus, an inspection of the Pulumi's Java libraries was made with the \gls{JavaParser} library, to infer useful information about the structure of the APIs so that an automatic generation of the \textit{syntactic sugar} code was possible.\\
-Finally, the code to automatically generate all the Scala \textit{syntactic sugar} code for all the AWS EC2 resources used in the case study was coded and used to generate such APIs.
-The generated code was eventually exported as a library so that it could be used in any Pulumi Scala project.
+In the last decades the infrastructure used by companies changed deeply.
+Years ago they were used to have on premise bare-metal servers, running their own applications, while now they rent cloud servers or applications and host their services in a serverless fashion.\\
+Such a modern approach granted enormous benefits to flexibility, but at the same time greatly increased the complexity to manage the configuration of such infrastructures.
+The current situation requires companies to resort to advanced tools for managing the always more complex structure of the owned cloud resources.
+The critical aspects of such tools are the range of cloud service providers (AWS, Azure, ecc.) supported and the programming language offered to work with such tools.\\
+Among all the tools that started to appear, Pulumi is the one that results to be the most innovative.
+With its multi-cloud and multiple general programming languages support, has all the features to address the high requirements imposed by the more and more complex cloud scenario.\\
+This work proves why the addition Scala represents a cool addition to the Pulumi's current pool of supported languages, and how a partial support of the language has been achieved in a very limited time.
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+%The document describes the work done from the graduating Cisotto Emanuele, in collaboration with Zoleo Andrea, from the Kynetics Srl company.
+%The objectives to achieve were many.\\
+%First, the study of the basics of the functioning of the Pulumi technology and the Scala language was made.\\
+%Second, a definition of a case study based on some \gls{AWS} \gls{EC2} resources was done. Hence, the respective implementation using Pulumi and the Typecript language has been done.\\
+%Then, after having identified the shortcomings of Pulumi with the TypeScript language, a \textit{syntactic sugar} for the Scala support for Pulumi has been manually coded.
+%Such a \textit{syntactic sugar} for Scala is based on the Java APIs for Pulumi.\\
+%At that point, the same case study has been implemented with the newly created Scala APIs for Pulumi.\\
+%Thus, an inspection of the Pulumi's Java libraries was made with the \gls{JavaParser} library, to infer useful information about the structure of the APIs so that an automatic generation of the \textit{syntactic sugar} code was possible.\\
+%Finally, the code to automatically generate all the Scala \textit{syntactic sugar} code for all the AWS EC2 resources used in the case study was coded and used to generate such APIs.
+%The generated code was eventually exported as a library so that it could be used in any Pulumi Scala project.
 
 
 

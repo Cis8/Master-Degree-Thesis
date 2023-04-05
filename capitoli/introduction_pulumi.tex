@@ -38,10 +38,15 @@ Finally, Pulumi comes with a range of integrated tools and features, such as aut
 \subsection{Overview of the functioning}
 Pulumi functioning is based on the interoperation of three main parts:
 \begin{description}
-  \item[Source code] is used to declare the resources to be created on the provider
-  \item[Backend engine] such engine could run on the Pulumi server or locally on the machine. When the \texttt{pulumi up} command is executed, a state file is created and stored in the backend engine. Such a file contains the logical description of all the resources. The engine uses such a file to create the descripted resources on the cloud providers
+  \item[Source code] is used to declare the resources to be created on the respective cloud service provider
+  \item[Backend engine] such engine could run on the Pulumi server or locally on the machine. When the \texttt{pulumi up} command is executed, a state file is created and stored in the backend engine. Such a file is representing a "screenshot" of the resources declared in the user's project. The engine then uses such a file to create the descripted resources on the cloud providers, thanks to the REST APIs that they are exposing
   \item[Resources of the providers] are the actual resources on the cloud providers
 \end{description}
+This image, taken from the official site of \href{https://www.pulumi.com/docs/intro/concepts/how-pulumi-works/}{Pulumi}, is representing the aforementioned architecture.
+\begin{center}
+  \includegraphics[width=1\columnwidth]{introduction_pulumi/engine-block-diagram} 
+  \captionof{figure}{Pulumi architecture}
+\end{center}\mbox{}\\
 The resources on the cloud providers could drift and their state might get different from the logical description in the state file of the backend engine.
 This could happen if an administrator manually modifies the resources without passing through the Pulumi project, or also if the cloud provider changes the APIs on an update.
 The \texttt{pulumi refresh} command is telling the engine to check if the states on the cloud providers are corresponding to the logical representation of the state file.
@@ -51,7 +56,7 @@ If it is not the case, the resources are modified in order to be aligned with th
 \subsection{Pulumi project}
 The interesting part for the user is the Pulumi project.
 Such a project, that can be created with the \texttt{pulumi new} command, can be any folder that contains a Pulumi.yaml file.
-This file specifies the runtime to be used (nodejs, pyhton, Java,etc.) and where to look for the program that should be executed during deployments.\\
+This file specifies the runtime to be used (nodejs, pyhton, Java, etc.) and where to look for the program that should be executed during deployments.\\
 The execution of the program will, through the Pulumi APIs, call the Pulumi engine to create the desired resources on the respective cloud providers.
 
 \subsection{The stack}
@@ -102,6 +107,6 @@ So, the usage of that resource is not available until Pulumi will have completed
 How can we perform operations on a resource when we do not know when it will become available?
 Pulumi addresses such a problem with the \texttt{Output} type.\\
 In Pulumi, \texttt{Output} values are typically computed asynchronously, so that they can represent resources that are being provisioned by cloud providers.
-Like a future, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
+Like a Future in Java, or a Promise in TypeScript, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
 This feature will come handy to chain the definition of resources that depends on other resources.\\
 We'll see how to create a Monad out of the \texttt{Output} type so that we'll be able to boost our \textit{syntactic sugar} in the Scala version of the case study.

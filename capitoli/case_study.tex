@@ -91,11 +91,11 @@ The private subnets will not be associated to such a routing table, since we wan
 Differently, without explicitly associating them to a given routing table, AWS will automatically associate them to a default routing table that, being not bound to an internet gateway, will keep them private.\\
 
 
-\section{Typescript implementation of the case study}
+\section{TypeScript implementation of the case study}
 \label{sec:typescript-impl}
-The first version of the implementation of the previously defined architecture is written using the Typescript APIs of Pulumi.
+The first version of the implementation of the previously defined architecture is written using the TypeScript APIs of Pulumi.
 The structure of the project, and this holds for the Java and Scala version as well, is trivial.
-We have a simple \texttt{index.ts} file that defines the entry point for our typescript project, and it is just a couple of lines long:\\
+We have a simple \texttt{index.ts} file that defines the entry point for our TypeScript project, and it is just a couple of lines long:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
     import { VPC } from './VPC/VPC';
@@ -105,7 +105,7 @@ We have a simple \texttt{index.ts} file that defines the entry point for our typ
 \end{minipage}
 The interesting part relies on the \texttt{MyVPC} class.
 Such a class extends the \texttt{ComponentResource} class of Pulumi.
-In our typescript implementation, we use the constructor of the user-defined \texttt{MyVPC} class to call all the class methods that are responsible for the creation of the resources.
+In our TypeScript implementation, we use the constructor of the user-defined \texttt{MyVPC} class to call all the class methods that are responsible for the creation of the resources.
 But this is just mentioned since the interesting part of the code are the actual methods that are responsible for the creation of the resources.
 
 \subsection{VPC resource creation}
@@ -244,10 +244,10 @@ This is the code to create the routing table resource:\\
       tags: {
           Name: "myRouteTable-typescript",
       },
-  },
-  {
-    parent: this.vpc,
-  });
+    },
+    {
+      parent: this.vpc,
+    });
   }
 \end{lstlisting}
 \end{minipage}
@@ -322,7 +322,7 @@ Such \textit{syntactic sugar} will be based on the Pulumi Java's APIs and will p
 The steps of the work done have been the followings:
 \begin{enumerate}
   \item manually write the \textit{sugared} functions to create the Pulumi resources using Scala
-  \item use such functions to recreate the \textit{stack} obtained with the typescript solution shown before in the \hyperref[sec:typescript-impl]{Typescript implementation of the case study} section
+  \item use such functions to recreate the \textit{stack} obtained with the TypeScript solution shown before in the \hyperref[sec:typescript-impl]{TypeScript implementation of the case study} section
   \item create an automatic code generator for our \textit{syntactic sugar} functions, so that we can quickly create a library for Scala's Pulumi APIs
   \item try to recreate the \textit{stack} with the automatically generated code
 \end{enumerate}
@@ -424,12 +424,13 @@ Much different from the other resources is the function to create the subnets:\\
   def createAzSubnets(isPvt: Boolean) =
       for
         azRes <- availabilityZonesNames()
+        myVpcId <- myVpc.id()
         tuples = azRes.names().zip(if isPvt then pvtSubnetsCidrs else pubSubnetsCidrs)
       yield
         tuples.map((name, cidr) => {
           val fullName = name + "-" + (if isPvt then "pvt" else "pub") + "-subnet-scala"
           subnet(fullName) ({
-            vpcId(myVpc.getId())
+            vpcId(myVpcId)
             availabilityZone(name)
             cidrBlock(cidr)
             tags("Name" -> fullName)
@@ -439,16 +440,29 @@ Much different from the other resources is the function to create the subnets:\\
       })
 \end{lstlisting}
 \end{minipage}
-We can notice here how we had the possibility to use the \texttt{map} function on \texttt{availabilityZonesNames()}.
-\texttt{availabilityZonesNames()} returns a \texttt{Output[GetAvailabilityZonesResult]} value, that isn't directly accessible from the \texttt{map} function.
-To achieve such a result we made a monad out of the \texttt{Output} type, so that map can be applied on the inner value of the \texttt{Output} \textit{context}.
-We'll see better how is the actual implementation of the monad soon.\\
-The for yield construct here is iterating over a zipped list made out of the availability zones names and the CIDR blocks for the respective kind of subnet to create (private or public, based on the input parameter isPvt).
-The for yield, for each tuple \texttt{(name, cidr)} will create a \texttt{Subnet} value and will return a \texttt{Subnet[]} as output.
-Now, the for is still inside the lambda of the \texttt{availabilityZonesNames().map} function.
-Consider the fact that \texttt{map} takes an \texttt{Output[A]} and returns an \texttt{Output[B]}, where \texttt{A = GetAvailabilityZonesResult} and \texttt{B = Output[Iterable[Subnet]]}.
-This is different from the typescript implementation in the \hyperref[par:ts-lambda]{Apply's lambda} paragraph, where the function that creates the subnets returns a plain \texttt{Subnet[]}.\\
-We will make further considerations about such a difference in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.\\
+We can notice how we achieved to get a solution that is relying only on the for yield construct thanks to the monad for the \texttt{Output} type, that we will soon see how it is actually implemented.\\
+The \texttt{azRes} enumerator is extracting a \texttt{GetAvailabilityZonesResult} object out from the \texttt{Output[GetAvailabilityZonesResult]} object returned by \texttt{availabilityZonesNames()}, 
+and the \texttt{myVpcId} is instead extracting the id of the Vpc from the \texttt{Output[String]} type coming from \texttt{myVpc.id()}.
+\textbf{These two enumerators are the replacement of the} \texttt{pulumi.all} \textbf{function in the TypeScript solution.}
+These extractions are possible only thanks to the mondadic implementation of the \texttt{Otput} type. 
+In fact this \textit{syntactic sugar} of the for yield is, behind the scenes, implemented as a concatenation of map and flatMap functions, that are exposed by the \texttt{Monad[Output]} type.\\
+At line 4 we have the definition of the \texttt{tuple} value as a zipping of the availability zone names (extracted with the \texttt{.names()} function) and the respective CIDR blocks.
+The tuples are mapped with a lambda that declares the various subnets to create.
+Now, the yield is concatenating the various declared subnets in a single \texttt{Output[Iterable[Subnet]]}, that is the return type of the for yield and so also of the function.\\
+We should in fact observe the fact that the for yield takes an \texttt{Output[A]} and returns an \texttt{Output[B]}, where \texttt{A = GetAvailabilityZonesResult} and \texttt{B = Output[Iterable[Subnet]]}, that is resembling to the map input/output types.
+%These are the exact input/output types granted from the map and flatMap functions declared in the \texttt{Monad[Output]} as we will see soon.
+
+
+%We can notice here how we had the possibility to use the \texttt{map} function on \texttt{availabilityZonesNames()}.
+%\texttt{availabilityZonesNames()} returns a \texttt{Output[GetAvailabilityZonesResult]} value, that isn't directly accessible from the \texttt{map} function.
+%To achieve such a result we made a monad out of the \texttt{Output} type, so that map can be applied on the inner value of the \texttt{Output} \textit{context}.
+%We'll see better how is the actual implementation of the monad soon.\\
+%The for yield construct here is iterating over a zipped list made out of the availability zones names and the CIDR blocks for the respective kind of subnet to create (private or public, based on the input parameter isPvt).
+%The for yield, for each tuple \texttt{(name, cidr)} will create a \texttt{Subnet} value and will return a \texttt{Subnet[]} as output.
+%Now, the for is still inside the lambda of the \texttt{availabilityZonesNames().map} function.
+%Consider the fact that \texttt{map} takes an \texttt{Output[A]} and returns an \texttt{Output[B]}, where \texttt{A = GetAvailabilityZonesResult} and \texttt{B = Output[Iterable[Subnet]]}.
+%This is different from the TypeScript implementation in the \hyperref[par:ts-lambda]{Apply's lambda} paragraph, where the function that creates the subnets returns a plain \texttt{Subnet[]}.\\
+%We will make further considerations about such a difference in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.\\
 
 \subsubsection{Attaching the subnets to the routing table}
 \begin{minipage}{\linewidth}
@@ -466,20 +480,23 @@ We will make further considerations about such a difference in the \hyperref[cap
           }))
 \end{lstlisting}
 \end{minipage}
-Similarly to the subnet creation function, also here we use map to "unbox" an \texttt{Output[Iterable[Subnet]]} value, to apply some logic on the inner value and then return a \texttt{Output[Iterable[RouteTableAssociation]]} value as result.
-Since the logic is analogous we won't comment this code further, but the fact we're having these two functions that both take an Output[A] as input and return an Output[B] will be a key point for our observations in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+Similarly to the subnet creation function, also here we use the for enumerators to "unbox" an \texttt{Output[Iterable[Subnet]]} value.
+After having zipped the subnets to the indexes, whose only purpose is to give a custom name to the created associations, we iterate over the tuples to declare the associations with the aid of a map function.\\
+Since the logic is analogous to the \texttt{createAzSubnets} function we won't comment this code further, but the fact we're having these two functions that both take an \texttt{Output[A]} as input and return an \texttt{Output[B]} will be a key point for our observations in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
+%Similarly to the subnet creation function, also here we use map to "unbox" an \texttt{Output[Iterable[Subnet]]} value, to apply some logic on the inner value and then return a \texttt{Output[Iterable[RouteTableAssociation]]} value as result.
+%Since the logic is analogous we won't comment this code further, but the fact we're having these two functions that both take an Output[A] as input and return an Output[B] will be a key point for our observations in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.
 
 \subsubsection{Resources creation with pulumi up}
 \label{sssec:res-cre-ts}
-Now lets make sure that the \textit{stack} created with \texttt{pulumi up} is the same of the one created with the typescript implementation.
-From this image we can see that they are equivalent to the ones shown in \hyperref[sssec:res-cre-ts]{Resources creation with pulumi up in Typescript}:
+Now lets make sure that the \textit{stack} created with \texttt{pulumi up} is the same of the one created with the TypeScript implementation.
+From this image we can see that they are equivalent to the ones shown in \hyperref[sssec:res-cre-ts]{Resources creation with pulumi up in TypeScript}:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/pulumi_up_scala_result} 
   \captionof{figure}{pulumi up result with the scala implementation}
 \end{center}\mbox{}\\
 
 \subsection{\textit{syntactic sugar} for the constructors of the resources}
-All the methods that we just used for creating the Pulumi resources in Scala (\texttt{vpc, internetGateway},etc.), behind the scenes are implemented following a common pattern.
+All the methods that we just used for creating the Pulumi resources in Scala (\texttt{vpc, internetGateway}, etc.), behind the scenes are implemented following a common pattern.
 Consider the vpc function of the \textit{syntactic sugar} defined inside the "PulumiUtilFunctionsForScala.scala" file:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -508,8 +525,8 @@ We will get the whole picture of this trick when we'll talk about the \textit{sy
 \subsubsection{Correspondence between the input parameters and the user defined code used to create the VPC}
 To have a better idea to what these parameters refer in our VCP creation case, consider this image:
 \begin{center}
-  \includegraphics[width=1.3\columnwidth]{case_study/vpc_params_boxes} 
-  \captionof{figure}{Parameters correspondence}
+  \hspace*{-1cm}\includegraphics[width=1.3\columnwidth]{case_study/vpc_params_boxes} 
+  \captionof{figure}{Parameters correspondence in the VPC declaration in Scala}
 \end{center}\mbox{}\\
 The red box represents the name for our VPC resource on the Pulumi \textit{stack}.\\
 The green one, with the curly brackets, is the lambda that takes a \textit{given} \texttt{VpcArgs.Builder} as an implicit parameter from the \textit{context}.
@@ -557,7 +574,7 @@ If this compiles is only thanks to the default parameter that is automatically i
 Another question now might arise: \textit{why didn't we change the signature of the function in the following way?}\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
-  def vpc(param: String)(using initOpt: (CustomResourceOptions.Builder ?=> Unit), init: VpcArgs.Builder ?=> Unit) :etc.
+  def vpc(param: String)(using initOpt: (CustomResourceOptions.Builder ?=> Unit), init: VpcArgs.Builder ?=> Unit) : etc.
 \end{lstlisting}
 \end{minipage}
 Here we have set the \texttt{initOpt} as an implicit parameter with the \texttt{using} keyword.
@@ -573,12 +590,22 @@ So, the original solution with the default parameter is the best one since it do
 \label{ssec:syn-sug-builders}
 What we have shown up to now is not enough to have our \textit{syntactic sugar} working, we are missing a subtle point to get the work done.
 Lets pay attention to how the \texttt{VpcArgs.Builder} parameters are set inside the vpc function call.
-To be precise we are referring to these methods:
-\begin{center}
-  \includegraphics[width=0.5\columnwidth]{case_study/vpc_b_methods} 
-  \captionof{figure}{vpc methods}
-\end{center}\mbox{}\\
-Once such a lambda will be invoked inside the vpc function itself, these methods will be executed, but on which builder?\\
+To be precise we are referring to the methods at line 2 and 3 of this code:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    val myVpc = vpc("scala-main") ({
+      cidrBlock("10.136.0.0/24")
+      tags("Name" -> "myVpcScala")
+    },{
+      parent(this)
+    })
+  \end{lstlisting}
+\end{minipage}
+%\begin{center}
+%  \includegraphics[width=0.5\columnwidth]{case_study/vpc_b_methods} 
+%  \captionof{figure}{vpc methods}
+%\end{center}\mbox{}\\
+Once the enclosing lambda will be invoked inside the vpc function itself, these methods will be executed, but on which builder?\\
 We already mentioned the fact that inside the vpc function a \textit{context} instance of the VpcArgs.Builder is initialized and the \texttt{init} lambda is able to use it as input parameter thanks to the '\texttt{?=>}' operator we have seen.
 But how can the actual \texttt{cidrBlock} and \texttt{tags} methods know on which builder they are being invoked?\\
 Without surprise, those methods take the \texttt{VpcArgs.Builder} builder as an implicit parameter with the \texttt{using} keyword.\\
@@ -670,7 +697,7 @@ But since this is automatically generated code, it is not a real problem to have
 To have the final picture of all the functioning lets consider this image:
 \begin{center}
   \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/syn-sug-flow} 
-  \captionof{figure}{Function calls flow and parameters passing}
+  \captionof{figure}{Function calls flow and parameters passing for the VPC declaration}
 \end{center}\mbox{}\\
 We can see how the lambda with the calls to our defined methods \texttt{cidrBlock} and \texttt{tags} is passed as the \text{init} parameter of the \textit{sugared} \texttt{vpc} function.
 Inside the \texttt{vpc} function we execute that lambda and so, the \texttt{cidrBlock} method is invoked.\\
@@ -782,12 +809,81 @@ The generation of the \textit{syntactic sugar} code required the following 2 pas
 \end{itemize}
 The first step has been quite straight forward with the aid of the JavaParser library.\\
 The second step has been more problematic.
-As a first attempt, I tried to use the metaprogramming features offered from the new Scala 3 Macros to create the autogenerated code in the form of an \gls{abstract syntax tree} (AST).
+
+\subsubsection{Scala 3 \textit{macro}s}
+As a first attempt, I tried to use the metaprogramming features offered from the new Scala 3 \textit{macro}s to create the autogenerated code in the form of an \gls{abstract syntax tree} (AST).
 This solution was potentially promising, since Scala also offers the opportunity to convert these ASTs in code and vice versa at compile time, and so telling us about any error at compile time.
-The problem encountered is that once we defined the macros for a new type (like \texttt{cidrBlockOwners}), such a type wasn't available at compile time for the other code.
-In other words, the types generated through the macro, cannot be referenced in the same project since the whole compilation must finish before having the chance to use the brand new types.\\
+The problem encountered was that once we defined the \textit{macro} for a new type (like \texttt{cidrBlockOwners}), such a type wasn't available at compile time for the other code.
+In other words, the types generated through the \textit{macro}, can't be referenced in the same project since the whole compilation must be finished before having the chance to use the brand new types.\\
+I'll report here the work done that is the attempt to define a custom type to be later used in the same project.
+In particular, the type definition was trying to address the generation of the custom types, like \texttt{cidrBlockOwners}. 
+These types were to be used later, in the same project, with other \textit{macro}s that would have represented the builders' methods and the constructors for the resources.
+
+\paragraph{What is a \textit{macro}}
+Thanks to the useful introduction provided by Pawel L. on \href{https://medium.com/codex/scala-3-macros-without-pain-ce54d116880a}{Medium}, I'll report here the key concepts of the Scala 3 \textit{macro}s.
+A Scala 3 \textit{macro} is a piece of code executed \textbf{by the compiler}.
+With the \textit{macro}s, it is possible to analyze and generate code.
+If an expression of type \texttt{T} should be used by the \textit{macro}, it needs to be converted to \texttt{Expr[T]} — the representation suitable for the \textit{macro}.
+The process is called \textit{quotation}.
+The output code representation created in the \textit{macro} is converted back and embedded in the program in the process of \textit{splicing}.\\
+Scala 3 \textit{macro}s manage the code as an AST. To be precise the Scala 3 implementation of the AST is used, that is called Typed Abstract Syntax Tree (TASTy).\\
+A \textit{macro} in general is defined by two functions.
+One is used to call the \textit{macro} in the code and the other is used define its implementation.\\
+Now lets consider a \textit{macro} to define a new type with a custom name and that represents the \texttt{String | Boolean} union type.
+The function that implements the \textit{macro} is the following one:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    def defineNewTypeImpl(name: Expr[String], types:
+         Expr[Seq[String]])(using ctx: Quotes) : Expr[Any] = 
+      '{ type $name = String | Boolean }
+  \end{lstlisting}
+\end{minipage}
+The \textit{quoting}, identified by the \texttt{'\{...\}} syntax, is encapsulating the code contained within the curly brackets in a TASTy representation.
+We can also note the \texttt{\$name} syntax within the curly brackets.
+In fact, since the \texttt{name} parameter is of type \texttt{Expr}, and hence is represented as a TASTy, we have to convert it to code in order to use it inside the curly brackets along with the rest of the code.
+To achieve this we used the splicing: \texttt{\$}.\\
+Now lets consider instead the function that we'll use to call the \textit{macro}:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    inline def defineNewType(inline name: String, inline types: String*): Any = 
+      ${ TypeGenMacroImpl.defineNewTypeImpl('name, 'types) }
+  \end{lstlisting}
+\end{minipage}
+The first thing we can notice from such a function is the presence of the \texttt{inline} keyword.
+The \textit{inlining}, in Scala, is the replacement of the code in the place of the usage instead of its reference.\\
+So when we'll call this function, its body will be replaced by the compiler at the site of the function call.
+Since the body of this function is the \texttt{splicing} of the call at the \textit{macro} implementation, the code that will be replaced will be in truth the one returned by the definition of the \textit{macro}.\\
+We evince that the key to work with \textit{macro}s is the combo between the \textit{inlining} and the \textit{quoting}/\textit{splicing}.
+The final result will be the compilation of a code that has the body of the definition of the \textit{macro} in place of the function call.\\
+
+What I wanted to achieve with all this was the possibility to define a new type through a \textit{macro} and reference that type somewhere else in the project.
+So I created this object for the definition of a new type:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    object NewTypeDefinition {
+      defineNewType("MyType", "")
+    }
+  \end{lstlisting}
+\end{minipage}
+With this code we are actually asking the compiler to replace the code of the \texttt{defineNewTypeImpl} function, with \texttt{"MyType"} as input parameter, in the place of call of the function at line 2 of the block of code just presented.\\
+The next step was to reference the newly created type somewhere else in the code, in this way:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    @main def hello: Unit = 
+      val x: MyType = "MyString value" \\ comp. error
+  \end{lstlisting}
+\end{minipage}
+Sadly this is not possible because of the problem that has been explained at the beginning of this section.
+The \texttt{MyType} type generated through the \textit{macro} is not available for us until the compilation of the whole project is complete.
+Hence, where we are trying to define the value \texttt{x} of type \texttt{MyType}, the compiler complains with the error "\texttt{Not found: type MyType}".\\
+This problem caused the whole \textit{macro} approach to fail.
+
+
+\subsubsection{Scalameta}
 Another option was represented by Scalameta, a library to read, analyze, transform and generate Scala programs, but it isn't compatible with Scala 3, and so I had no chance to use it.
-If the support for Scala 3 will be added to Scalameta, it should be considered as a better approach for the generation of the \textit{syntactic sugar} code in the future.\\
+If the support for Scala 3 will be added to Scalameta, it should be considered as a better approach for the generation of the \textit{syntactic sugar} code in the future.
+
+\subsubsection{A naive approach as solution}
 So, for the second step, a standard \textit{naive} approach has been adopted.
 The auto-generated code is created with a program that inserts the piece of information extracted from the analysis of the Java APIs with Javaparser into a template for the PulumiBuilderUtilFunctionsForScala and the PulumiUtilFunctionsForScala functions.
 The generated code can then be exported as a library and included into the dependencies of the building tool used in the Pulumi Scala project.
@@ -847,13 +943,33 @@ With the information achieved we are now ready to fill in the templates and gene
 The class that generates all the code is quite simple.
 A Java \texttt{FileWriter} will take care of writing all the strings that represents our code in the PulumiBuilderUtilFunctionsForScala.scala and PulumiUtilFunctionsForScala.scala files.\\
 We have two functions, named \texttt{writeContentForBuilders} and \texttt{writeContentForConstructors} that will write all the \textit{various pieces} of generated code into the files using the \texttt{FileWriter}.
-With \textit{various pieces} I refer to the generated types for the methods of the builders, the imports, the conversion functions,etc.\\
+With \textit{various pieces} I refer to the generated types for the methods of the builders, the imports, the conversion functions, etc.\\
 Finally we have a bunch of functions that fill the various templates to generate the \textit{various pieces} of code.
 These functions are: \texttt{generateTypes}, \texttt{generateBuilderMethods}, \texttt{generateConstructors}, and \texttt{generateImplicitConversionFunctions}.
-To have an idea of how the filling of a template works lets consider the \texttt{generateConstructors} function:
+To have an idea of how the filling of a template works lets consider the \texttt{generateConstructors} function:\\
+%\begin{minipage}{\linewidth}
+%  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+%  def generateConstructors(extractedConstructors: Array[String]) : Array[String] =
+%    for con <- extractedConstructors
+%      yield {
+%        val functionName = con.drop(con.lastIndexOf('.') + 1)
+%        val builderCon = con + "Args.Builder";
+%        "def " + functionName.head.toLower + functionName.tail +
+%          "(param: String)(init: " +
+%          builderCon +
+%          " ?=> Unit, initOpt: (CustomResourceOptions.Builder ?=> Unit) = baseOpts): " +
+%          con + " =\n" +
+%        "\tgiven b: " + builderCon + "= " + con + "Args.builder()\n" +
+%        "\tinit\n" +
+%        "\tgiven bo: CustomResourceOptions.Builder = CustomResourceOptions.builder()\n" +
+%        "\tinitOpt\n" +
+%        "\tnew " + con + "(param, b.build(), bo.build())"
+%      }
+%  \end{lstlisting}
+% \end{minipage}
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/template_gen} 
-  \captionof{figure}{Constructors generation}
+  \captionof{figure}{Code for automatic generation of the resources constructors}
 \end{center}\mbox{}\\
 The template is filled with the variables that represent the name of the constructors, and this is done for each constructor that has been found.\\
 Since also the other functions are similar to this one, won't be reported here.
@@ -862,33 +978,135 @@ Since also the other functions are similar to this one, won't be reported here.
 Since the generated files contains many hundreds of lines of code, I'll report here only some samples of each file.\\
 
 \paragraph{PulumiBuilderUtilFunctionsForScala}
-First we have some default imports:
-\begin{center}
-  \includegraphics[width=1\columnwidth]{case_study/build_imports} 
-  \captionof{figure}{Default import}
-\end{center}\mbox{}\\
-Then we have some all the generated union types, that look like:
-\begin{center}
-  \hspace*{-3cm}\includegraphics[width=1.5\columnwidth]{case_study/generated_union_types} 
-  \captionof{figure}{Generated union types}
-\end{center}\mbox{}\\
-The implicit conversion functions are then printed:
-\begin{center}
-  \includegraphics[width=1\columnwidth]{case_study/implicit_conv_fun} 
-  \captionof{figure}{Implicit conversion functions}
-\end{center}\mbox{}\\
-Finally we have all the builders' methods that we encountered during our visit of the files with the JavaParser project:
-\begin{center}
-  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_builder_methods} 
-  \captionof{figure}{Generated builders' methods}
-\end{center}\mbox{}\\
+First we have some default imports:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    package com.cisotto.myvpc.builder
+
+    import com.pulumi.Context
+    import com.pulumi.Pulumi
+    import com.pulumi.core.Output
+    import com.pulumi.resources.{CustomResourceOptions, Resource}
+    import scala.collection.JavaConverters._
+    import collection.convert.ImplicitConversionsToScala.`collection AsScalaIterable`
+    import scala.compiletime.ops.boolean
+    import scala.compiletime.ops.string
+    import scala.language.implicitConversions
+    import com.pulumi.resources.CustomResourceOptions
+    import com.pulumi.resources.ResourceArgs
+  \end{lstlisting}
+ \end{minipage}
+%\begin{center}
+%  \includegraphics[width=1\columnwidth]{case_study/build_imports} 
+%  \captionof{figure}{Default import}
+%\end{center}\mbox{}\\
+Then we have some all the generated union types, that look like:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    ...
+    type vpcIdOwners = InternetGatewayArgs.Builder | RouteTableArgs.Builder | SubnetArgs.Builder
+    type gatewayIdOwners = RouteTableRouteArgs.Builder | RouteTableAssociationArgs.Builder
+    type localGatewayIdOwners = RouteTableRouteArgs.Builder
+    type tagsOwners = InternetGatewayArgs.Builder | RouteTableArgs.Builder | ubnetArgs.Builder | VpcArgs.Builder
+    ...
+  \end{lstlisting}
+ \end{minipage}
+%\begin{center}
+%  \hspace*{-3cm}\includegraphics[width=1.5\columnwidth]{case_study/generated_union_types} 
+%  \captionof{figure}{Generated union types}
+%\end{center}\mbox{}\\
+The implicit conversion functions are then printed:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    given tupleToMap[A, B]: Conversion[(A, B), Map[A, B]] =
+      (tuple: (A, B)) => Map(tuple)
+  
+    given elemToList[A <: ResourceArgs]: Conversion[A, List[A]] =
+      (elem: A) => List(elem)
+  \end{lstlisting}
+ \end{minipage}
+%\begin{center}
+%  \includegraphics[width=1\columnwidth]{case_study/implicit_conv_fun} 
+%  \captionof{figure}{Implicit conversion functions}
+%\end{center}\mbox{}\\
+Finally we have all the builders' methods that we encountered during our visit of the files with the JavaParser project:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+  ...
+  def egressOnlyGatewayId(param: String | Output[String])(using b: egressOnlyGatewayIdOwners): Unit =
+    b match
+      case builder: RouteTableRouteArgs.Builder =>
+        param match
+          case x: String => builder.egressOnlyGatewayId(x)
+          case x: Output[String] => builder.egressOnlyGatewayId(x)
+  
+  
+  def ipv6IpamPoolId(param: String | Output[String])(using b: ipv6IpamPoolIdOwners): Unit =
+    b match
+      case builder: VpcArgs.Builder =>
+        param match
+          case x: String => builder.ipv6IpamPoolId(x)
+          case x: Output[String] => builder.ipv6IpamPoolId(x)
+  
+  
+  def cidrBlock(param: String | Output[String])(using b: cidrBlockOwners): Unit =
+    b match
+      case builder: RouteTableRouteArgs.Builder =>
+        param match
+          case x: String => builder.cidrBlock(x)
+          case x: Output[String] => builder.cidrBlock(x)
+      case builder: SubnetArgs.Builder =>
+        param match
+          case x: String => builder.cidrBlock(x)
+          case x: Output[String] => builder.cidrBlock(x)
+      case builder: VpcArgs.Builder =>
+        param match
+          case x: String => builder.cidrBlock(x)
+          case x: Output[String] => builder.cidrBlock(x)
+  ...
+  \end{lstlisting}
+\end{minipage}
+%\begin{center}
+%  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_builder_methods} 
+%  \captionof{figure}{Generated builders' methods}
+%\end{center}\mbox{}\\
 
 \paragraph{PulumiUtilFunctionsForScala}
-Also here we start with some default imports, then we have the baseOpts function and then all the constructors for the various resources:
-\begin{center}
-  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_constructors} 
-  \captionof{figure}{baseOpts function and generated constructors}
-\end{center}\mbox{}\\
+Also here we start with some default imports, then we have the baseOpts function and then all the constructors for the various resources:\\
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
+    def baseOpts(using o: CustomResourceOptions.Builder) : Unit = {} 
+
+    def ami(param: String) (init: AmiArgs.Builder ?=> Unit, 
+        initOpt: (CustomResourceOptions.Builder ?=> Unit) = baseOpts): Ami =
+      given b = com.pulumi.aws.ec2.AmiArgs.builder()
+      init
+      given bo = CustomResourceOptions.builder()
+      initOpt
+      new Ami(param, b.build(), bo.build())
+    
+    def amiCopy(param: String)(init: AmiCopyArgs.Builder ?=> Unit, 
+        initOpt: (CustomResourceOptions.Builder ?=> Unit) = baseOpts): AmiCopy =
+      given b = AmiCopyArgs.builder()
+      init
+      given bo = CustomResourceOptions.builder()
+      initOpt
+      new AmiCopy(param, b.build(), bo.build())
+    
+    def amiFromInstance(param: String)(init: AmiFromInstanceArgs.Builder ?=> Unit, 
+        initOpt: (CustomResourceOptions.Builder ?=> Unit) = baseOpts): AmiFromInstance =
+      given b = AmiFromInstanceArgs.builder()
+      init
+      given bo = CustomResourceOptions.builder()
+      initOpt
+      new AmiFromInstance(param, b.build(), bo.build())
+  \end{lstlisting}
+\end{minipage}
+
+%\begin{center}
+%  \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/generated_constructors} 
+%  \captionof{figure}{baseOpts function and generated constructors}
+%\end{center}\mbox{}\\
 
 \paragraph{Final observations on the generated code}
 The builders' methods are really similar to each other, but they are not all following the same exact pattern across the whol AWS EC2 module.

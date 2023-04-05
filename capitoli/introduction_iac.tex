@@ -7,7 +7,7 @@
 \label{cap:introduction-to-iac}
 %**************************************************************
 
-\intro{An introduction to IaC. The birth of the IaC is firstly presented, then the possible approaches, the advantages of using IaC, its challenges, and the evolution of the IaC with the second generation of tools}\\
+\intro{An introduction to the Infrastructure as Code (IaC). The birth of the IaC is firstly presented, then the possible approaches, the advantages of using IaC, its challenges, and the evolution of the IaC with the second generation of tools. Finally the related works are presented}\\
 
 %**************************************************************
 
@@ -18,7 +18,7 @@
 \subsection{Bare-metal servers and manual configurations}
 Originally companies owned bare-metal servers on which hosted own services.
 Each server was capable to host a single service.
-The configuration of such servers was manually made using paper sheet with information about the configuration parameters (such as IPs, environment variables,etc.), or with shell scripts that had to be manually maintained and changed as the infrastructure changed or had to be reconfigured.
+The configuration of such servers was manually made using paper sheet with information about the configuration parameters (such as IPs, environment variables, etc.), or with shell scripts that had to be manually maintained as the infrastructure changed or had to be reconfigured.
 Some templates have been created to slightly automate the process of reconfiguration of the servers.\\
 
 \subsection{The advent of the virtualization}
@@ -32,11 +32,11 @@ The virtualization layer is having its own configuration, on top of the one of t
 For a company, buying its own hardware servers have an extremely high cost at the beginning.
 With the virtualization, the possibility to borrow hardware servers was made possible.
 The virtual machines of the company are run on the rent servers thanks to the virtualization.
-These operations were made possible by the management console offered by the providers of the servers, that allowed to instantiate the application as a virtual machine on their server.\\
+These operations were made possible by the management console offered by the providers of the servers, that allowed to instantiate the application as a virtual machine on their servers.\\
 With this cloud service providers were born, offering the bare-metal server rental service with a pay as you go pricing.
-These borrowed machines compose the concept of \textit{cloud}.
 The more resources you use (or rent), the more you pay.
-Such an approach zeroes the initial costs to both buy, setup, and maintain a personal infrastructure.\\
+This mechanism led to the birth of the cloud.\\
+Such an approach zeroes the initial costs to both buy, setup, and maintain a personal infrastructure.
 Obviously this led to the need of having configuration files to ensure repeatability and reproducibility of the operations done on the cloud.
 The engine that interprets such  files is host on the cloud itself.\\
 At the same time, the APIs used from the management consoles have been exposed as official automation APIs.
@@ -57,7 +57,7 @@ The most common applications started to be directly provided by the cloud servic
 At this point, the user didn't have any more to take care of virtualizing a virtual machine or a container on a specific server.
 He just had to request for the desired resource to the cloud provider and it would have taken care to virtualize it on an available machine (that could have been different any time the service was to be made available).\\
 With this trend, also smaller custom logic started to be executed on virtual servers, such as custom lambdas, queues of messages, cache memory services, etc.\\
-The serverless advent put even more pressure on the configuration required for the infrastructure.
+All this led to the serverless computing, which has put even more pressure on the configuration required for the infrastructure.
 
 \subsection{The advent of the Infrastructure as Code}
 We notice from the previous paragraphs that, over time, the amount of configuration required has kept increasing over time, reaching its peak with the current serverless cloud scenario.
@@ -73,7 +73,7 @@ The evolution we have seen before has brought to an engineering of the system ad
 The management of configuration files for the infrastructure as code is at the base of the Infrastructure as Code (and here is why it is called so).
 %It can't exist IaC without the IaaS (Infrastructure as a Service) concept.
 %An IaaS is identified by set of raw IT resources offered to the user by the cloud service provider. They can be used to virtualise an infrastructure, or for resource-intensive projects — i.e. machine learning, big data, hosting, etc.\\
-In other words, we could call Infrastructure as Code the process of managing and provisioning \gls{IaaS}s through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools. \\
+In other words, we could call Infrastructure as Code the process of managing and provisioning \gls{IaaS} through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools. \\
 The IT infrastructure managed by this process comprises, as we have seen in the previous section, both physical equipment, such as bare-metal servers, and also virtual machines, virtualized applications and services, and the associated configuration resources. \\
 The definitions may be in a version control system. The code in the definition files may use either scripts or declarative definitions, rather than maintaining the code through manual processes, but IaC more often employs declarative approaches.
 
@@ -86,7 +86,7 @@ The declarative approach defines the desired state and the system executes what 
 Imperative defines specific commands that need to be executed in the appropriate order to end with the desired conclusion.\\
 In the \hyperref[sec:story-iac]{How we arrived to the IaC} section we have seen how first the APIs of the cloud service providers have been exposed, and only after the configuration management tools were born.
 The exposed APIs are by nature imperative. In fact their usage is cumbersome and the user must be aware of what he is actually doing, otherwise configuration errors might happen.\\
-The configuration management tools that were born after the serverless scenario arrived, are instead using a declarative approach.
+The configuration management tools that were born after the advent of the serverless scenario are instead using a declarative approach.
 
 \subsubsection{Methods}
 
@@ -96,7 +96,7 @@ In the pull method, the server to be configured will pull its configuration from
 In the push method, the controlling server pushes the configuration to the destination system.
 
 \subsection{Infrastructure as Code tools' main parts and their functioning}
-From now on, for the aim of this thesis, with IaC tools we'll be referring to set of the following technologies: \gls{GCP}, \gls{Azure}, \gls{CloudFormation}, \gls{Terraform}, \gls{CDK}, and Pulumi.\\
+From now on, for the aim of this thesis, with IaC tools (or configuration management tools) we'll be referring to set of the following technologies: \gls{GCP}, \gls{Azure}, \gls{CloudFormation}, \gls{Terraform}, \gls{CDK}, and Pulumi.\\
 The various existing IaC tools have a different architectures and functioning, but at their base they share the same abstract structure:
 \begin{description}
   \item[declarative APIs for the user] these APIs let the user declare the resources that he would like to instantiate on a certain cloud service provider
@@ -152,8 +152,8 @@ This also makes debugging much easier and accurate.\\
 Related to this, if we create all the resources of the infrastructure using a program, we can always know what are the resources that we have on the cloud.
 On the other hand, before IaC, once the administrators created the desired resources on the service providers, there was no way to know which resources were actually present.
 Tools to inspect the state of the cloud providers were created, but their reliability is not bulletproof.
-The modern IaC approach, and especially with advanced tools as Pulumi, addressed this problem masterfully.\\
-Finally, when automation functionalities are provided with the considered IaC tool, we are given the possibility to define various branches (develop, stage, production,etc.).
+The modern IaC approach, and especially with advanced tools as Pulumi, addressed this problem masterfully since the entire declaration of the infrastructure is coded in single and a well-structured project.\\
+Finally, when automation functionalities are provided with the considered IaC tool, we are given the possibility to define various branches (develop, stage, production, etc.).
 This was not possible without IaC, the infrastructure was one and only one.
 The chance to have different branches let us test and experiment the changes of our infrastructure before actually bringing them on stage and eventually on production.\\
 
@@ -165,16 +165,16 @@ While IaC offers numerous benefits, there are also several challenges that organ
 One of the major challenges is the adoption discrepancies that arise when integrating new frameworks with existing technology. This requires careful coordination with other teams, particularly those responsible for security and compliance, and can result in difficulties in determining where resources are being delivered, controlled, and managed. To address these issues, organizations must continually communicate and audit their IaC adoption to minimize infrastructure drift and ensure that security measures remain up to date.\\
 Another challenge is the need for security assessment tools that can effectively evaluate the dynamic nature of IaC. Traditional security measures may require significant cycles to be integrated with IaC, and there may be a need for human checks to ensure that resources are operating correctly and being used by the appropriate applications. Organizations may need to invest in new tools or capabilities to ensure proper control and monitoring.\\
 The implementation of IaC also requires a high degree of technical competence, which can result in the need for new human capital. Senior executives may face challenges in continually investing in employee skills, particularly if the organization is in the early adoption phase. Outsourcing IaC services may be a viable option for organizations to improve automation processes in terms of cost and overall IT infrastructure quality.\\
-Versioning and traceability of settings can also be a challenge when IaC is utilized widely across an organization with various teams. As IaC becomes more complex, it can be difficult to keep track of infrastructure and identify infra-drift, making it essential to implement effective version control and tracking mechanisms.\\
+Versioning and traceability of settings can also be a challenge when IaC is utilized widely across an organization with various teams. As IaC becomes more complex, it can be difficult to keep track of infrastructure and identify infra-drift, making it essential to implement effective version control and tracking mechanisms.
 
 
 \subsection{Evolution of IaC tools}
 
 \subsubsection{Tools designed for Serverless Applications - the first wave}
-The foundation of IaC in the public clouds is these three cloud vendor-specific tools: AWS \gls{CloudFormation} in \gls{AWS}, \gls{Azure Resource Manager} (ARM) in \gls{Azure}, and \gls{Cloud Deployment Manager} in \gls{GCP}.
-These are YAML or JSON based, declarative tools and have been in cloud toolboxes for a long time and require a fair amount of markup code.
+The foundation of IaC in the public clouds is these three cloud vendor-specific IaC tools: \gls{CloudFormation} in \gls{AWS}, \gls{Azure Resource Manager} (ARM) in \gls{Azure}, and \gls{Cloud Deployment Manager} in \gls{GCP}.
+These are YAML or JSON based declarative tools and have been in cloud toolboxes for a long time and require a fair amount of markup code.
 Tools with shortcuts or “conventions over configuration” were developed to boost productivity and make distributed microservice applications seem more like a traditional monolithic application or a framework.
-These tools provide best-practice defaults and enable building and testing your serverless applications locally on your machine.\\
+These tools enable building and testing your serverless applications locally on your machine.\\
 Some of these tools made a further step by supporting multiple cloud service providers in a single solutions, like Terraform.
 \subsubsection{Serverless Infrastructure as programming language code - the second wave}
 \label{sssec:second-wave}
@@ -204,7 +204,7 @@ This is clearly a convenient functionality since it lets the user have a single 
 Both Pulumi and CDK let the user choose from many commonly used programming languages.\\
 
 For how we have seen in the \hyperref[sec:story-iac]{How we arrived to the IaC} section, the increasing complexity of the infrastructure with the advent of the cloud and the serverless requires more and more robust tools and programming languages to exploit at the best the refactoring, reuse, and the logical organization of the code in well defined structures or packets.\\
-Moreover, the competition that is involving all the various providers is bringing the companies to choose multi cloud solutions. Because of this, IaC tools that support multiple clouds are preferable to the ones supporting a single cloud service provider.\\
+Moreover, the competition that is involving all the various providers is bringing the companies to choose multi-cloud solutions. Because of this, IaC tools that support multiple clouds are preferable to the ones supporting a single cloud service provider.\\
 Let's now see how Pulumi and the other various available tools are satisfying these two main aspects.
 
 \subsubsection{CloudFormation: scripting languages and a single cloud provider supported}
@@ -227,8 +227,8 @@ All the features of the selected programming language can boost the offered solu
 Pulumi doesn't want to give up on anything.
 It succeeded in offering a solution that is flexible under both of the two aspects.
 Pulumi managed to achieve what the other IaC tools and platforms did not, and because of this is bringing on the table some innovation and added value with respect to the competitors.\\
-Pulumi successfully abstracted from the problem in order to find a smart solution to achieve both the multi programming language support and the multi cloud service provider support.
-It decoupled the REST APIs offered from the various cloud service providers (to create the resources) from the user APIs of Pulumi (that are used to inform Pulumi about what resources should be created on the various CSPs).
+Pulumi successfully abstracted from the problem in order to find a smart solution to achieve both the multi programming language support and the multi-cloud service provider support.
+It decoupled the REST APIs offered from the various cloud service providers (to create the resources) from the user APIs of Pulumi (that are used from the user to inform Pulumi about what resources should be created on the various CSPs).
 Pulumi's backend engine converts the code written from the user to effective REST API calls to the various cloud service providers, and eventually create the resources.\\
 This workflow is the major innovation brought by Pulumi, and for sure the key that allowed it to don't give up neither on the flexibility of the supported programming languages and nor on the supported cloud providers.
 
@@ -239,20 +239,20 @@ Java support has been added to Pulumi during the 2022.
 The large amount of work done by the Pulumi's team has brought advantages from various points of view.\\
 When we choose what language to use from the various opportunities offered by Pulumi, we cannot limit our choice to the features offered by the language and our tastes.
 We shall also consider the robustness of the building system, the available libraries, the code management, the documentation, the user base, and the available IDEs for that language.\\
-For example, nodejs (Typescript's building system) is less mature and robust with respect to the Java's one.\\
+For example, nodejs (TypeScript's building system) is less mature and robust with respect to the Java's one.\\
 Moreover, the Java development features a good amount of mature and complete IDEs.
-IntelliJ IDEA and Eclipse, to mention the most famous ones, are powerful IDEs that allow the user to do effective refactoring, inspection, reverts, and more on the code.
-The features of the language sometimes are also affect what characteristics an IDE can have.
-For example, Typescripts duck typing is not of help to the IDEs when it comes to code inspection and refactoring.
+IntelliJ IDEA and Eclipse, to mention the most famous ones, are powerful IDEs that allow the user to do effective refactoring, inspection, reverts, and more on the code.\\
+The features of the language sometimes are also affecting what characteristics an IDE can have.
+For example, TypeScript's duck typing is not of help to the IDEs when it comes to code inspection and refactoring.
 On the other hand, the much more robust and well defined type system in Java is granting IntelliJ and Eclipse amazing tools to manage the code at our please.\\
 We could mention also how Python and Java have many libraries to choose from to enrich our solution.
-Typescript instead is having much less.\\
-Furthermore, Java has a much better management of the code with respect to Typescript.
-The Java packages are useful when the solution grows in size, while Typescript's one will eventually start to "creak" due to its poor code management features.
+TypeScript instead is having much less.\\
+Furthermore, Java has a much better management of the code with respect to TypeScript.
+The Java packages are useful when the solution grows in size, while TypeScript's one will eventually start to "creak" due to its poor code management features.
 An IaC architecture will keep growing in size as time passes, so the possibility to use a programming language that offers good tools to manage the codebase, such as Java, is a valuable feature to keep in mind when choosing the programming language.\\
 Last but not least, with Java addition to Pulumi, all the languages based on the JVM can actually work with Pulumi.
-In fact the great effort made from Pulumi is actually opening the doors to many more languages such as: Scala, Kotlin, Groovy, Clojure,etc.
-In fact, my Scala solution has been made possible exactly because of this fact since I defined my Scala APIs for Pulumi on top of the Java APIs.
+In fact the great effort made from Pulumi is actually opening the doors to many more languages such as: Scala, Kotlin, Groovy, Clojure, etc.
+In fact, my Scala solution has been made possible exactly because of this fact, since I defined my Scala APIs for Pulumi on top of the Java APIs.
 
 
 \subsubsection{The onerous work to officially support a new language in Pulumi}

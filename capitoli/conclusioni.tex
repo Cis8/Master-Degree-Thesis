@@ -15,26 +15,47 @@
 
 
 \section{The potential of Scala for Pulumi}
-Typescript's high readability is a really appreciated feature when it comes define resources with Pulumi.
-Its declarative nature is marvelously fitting with the declarative approach chosen from Pulumi, but yet some language limitations require the user to resort to suboptimal solutions that are less readable and concise.
-The challenges posed by Pulumi while having to define resources that depends on other resources required Typescript to resort on the \texttt{pulumi.all} function to get the work done.
-These kind of patches are used when the limited Expressiveness of a language reach its limits.\\
-Scala is instead a modern language with powerful and flexible characteristics.
-The focus of the work was to design some Scala APIs for Pulumi in order to obtain the same Typescript readability while bringing along all the cool features of the Scala language and its functional paradigm.\\
-The tricky part of the work was to find a way to turn all the complexity of the language, and hence its more verbose nature, in a readable and concise solution.
-Its complexity turned out to be the key for the goal.
-Thanks to powerful characteristics such as the currying, the implicit parameters and the monads, the definition of cool \textit{syntactic sugar} functions was made possible.
-The \textit{sugared} functions turned out to be really readable and expressive.
-Hence, where Typescript failed due to its lack of expressiveness, Scala succeeded relying exclusively on its own features and characteristics.
-In fact we might consider the fact that Scala is a strongly typed language, while Typescript uses the duck typing.
-This means that the Scala solution won't have any type error at compile time, granting a more robust solution.\\
-Furthermore, the Scala version turned out to be, sometimes, even more concise than the Typescript solution.\\
+The infrastructure scenario kept evolving in the last decades allowing for more and more flexible solutions.
+By the way this flexibility didn't come for free.
+The complexity and amount of configuration required grew along with the increasing flexibility.
+The tools for the management of the configuration evolved as well, reaching their peak with Pulumi.
+It is capable to offer a single solution to manage all the desired cloud resources offered by many cloud providers.
+This feature meets the requirements of many companies that, due to the cloud providers competition, often opt for a multi-cloud solution of their infrastructure.
+Moreover, Pulumi supports many general purpose programming languages instead of relying on less expressive markup languages.
+With this feature, Pulumi can keep up with the always more demanding requisites posed from the configuration management increasing complexity.\\
+Though, some languages are more expressive than others, and sometimes they are carrying over some extra complementary benefits or shortcomings.
+We have already seen how TypeScript's limited expressiveness had us resort on the \texttt{pulumi.all} function and we already discussed how the building system of TypeScript is not as mature as the java one, how the duck typing represents a limitation for the refactoring tools offered from the IDEs, and more.
+Scala, on top of having more expressive constructs that allowed for a better expressiveness, is also carrying over many complementary benefits, such as: many libraries, interoperability with the other JVM languages, a powerful building system, great IDEs to support the refactoring of the code, and a better management of the logical structure of the code as packets.\\
+TypeScript's high readability is a really appreciated feature when it comes to define resources with Pulumi.
+On the other hand Scala, by nature, is more verbose.
+Anyway, the functional paradigm of Scala and its nature prone to the definition of internal DSLs, granted me the possibility to define a powerful \textit{syntactic sugar}.
+Such \textit{sugared} functions let me achieve a very readable solution that, in some cases, was even more concise with respect to the TypeScript's one.\\
+So all the heavy machinery that Scala was bringing over turned out to be the solution to achieve a both robust, concise, and readable solution.\\
+The main successes of the work are mainly two.
+First, it has been shown that Scala is offering the chance to achieve very readable and concise IaC solutions while not giving up on solid complementary tools and benefits.
+Second, we proved how the support of a such an interesting language can be added to Pulumi exploiting the already supported Java APIs of Pulumi and the interoperability between the JVM languages (like Scala and Java), greatly reducing the effort needed to develop a Scala support for Pulumi.
+
+
+%TypeScript's high readability is a really appreciated feature when it comes to define resources with Pulumi.
+%Its declarative nature is marvelously fitting with the declarative approach chosen from Pulumi, but yet some language limitations require the user to resort to suboptimal solutions that are less readable and concise.
+%The challenges posed by Pulumi while having to define resources that depends on other resources required TypeScript to resort on the \texttt{pulumi.all} function to get the work done.
+%These kind of patches are used when the limited Expressiveness of a language reach its limits.\\
+%Scala is instead a modern language with powerful and flexible characteristics.
+%The focus of the work was to design some Scala APIs for Pulumi in order to obtain the same TypeScript readability while bringing along all the cool features of the Scala language and its functional paradigm.\\
+%The tricky part of the work was to find a way to turn all the complexity of the language, and hence its more verbose nature, in a readable and concise solution.
+%Its complexity turned out to be the key for the goal.
+%Thanks to powerful characteristics such as the currying, the implicit parameters and the monads, the definition of cool \textit{syntactic sugar} functions was made possible.
+%The \textit{sugared} functions turned out to be really readable and expressive.
+%Hence, where TypeScript failed due to its lack of expressiveness, Scala succeeded relying exclusively on its own features and characteristics.
+%In fact we might consider the fact that Scala is a strongly typed language, while TypeScript uses the duck typing.
+%This means that the Scala solution won't have any type error at compile time, granting a more robust solution.\\
+%Furthermore, the Scala version turned out to be, sometimes, even more concise than the TypeScript solution.\\
 
 
 \section{Future improvements}
 The work done with my thesis was able to analyze only some of the many challenges that Pulumi has to offer to the various programming languages while defining a solution for a given use case.
 Yet, the results obtained wanted to show that the flexibility of Scala can potentially address any kind of difficulty encountered.
-Therefore, a further extension of the work done to investigate supplementary possibilities offered by this language with Pulumi would be interesting.\\
+Therefore, a further extension of the work done with the aim to investigate which other supplementary possibilities Scala has to offer with Pulumi would be indeed interesting.\\
 If possible, an official and complete support of Scala for Pulumi would be, in my opinion, a fantastic addition to the roster of languages of Pulumi.
 
 %Scala's functional paradigm is matching very well the declarative approach of Pulumi.
