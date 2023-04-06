@@ -7,7 +7,7 @@
 \label{cap:introduction-to-iac}
 %**************************************************************
 
-\intro{An introduction to the Infrastructure as Code (IaC). The birth of the IaC is firstly presented, then the possible approaches, the advantages of using IaC, its challenges, and the evolution of the IaC with the second generation of tools. Finally the related works are presented}\\
+\intro{An introduction to the Infrastructure as Code (IaC). The birth of the IaC is firstly presented, then the possible approaches, the advantages of using IaC, its challenges, and the evolution of the IaC with the second generation of tools. Finally, the related works are presented}\\
 
 %**************************************************************
 
@@ -16,24 +16,24 @@
 \label{sec:story-iac}
 
 \subsection{Bare-metal servers and manual configurations}
-Originally companies owned bare-metal servers on which hosted own services.
-Each server was capable to host a single service.
+Originally companies owned bare-metal servers on which hosted their own services.
+Each server was capable to host a single service, that was being run on the server's operative system.
 The configuration of such servers was manually made using paper sheet with information about the configuration parameters (such as IPs, environment variables, etc.), or with shell scripts that had to be manually maintained as the infrastructure changed or had to be reconfigured.
 Some templates have been created to slightly automate the process of reconfiguration of the servers.\\
 
 \subsection{The advent of the virtualization}
-The virtualization era began as the virtual machine concept was born.
-Here companies still had to own bare-metal servers, but the virtualization granted the possibility to scale software services upon one or more hardware servers.
+The virtualization era began when the virtual machine concept was born.
+In this period companies still had to own bare-metal servers, but the virtualization granted the possibility to scale software services upon one or more hardware servers.
 This was possible to the decoupling between the hardware and the software.
 However, to achieve this goal a further amount of configuration was required to be given and maintained.
 The virtualization layer is having its own configuration, on top of the one of the bare-metal server.\\
 
 \subsection{The cloud}
-For a company, buying its own hardware servers have an extremely high cost at the beginning.
+For a company, buying its own hardware servers is extremely expensive at the beginning.
 With the virtualization, the possibility to borrow hardware servers was made possible.
 The virtual machines of the company are run on the rent servers thanks to the virtualization.
 These operations were made possible by the management console offered by the providers of the servers, that allowed to instantiate the application as a virtual machine on their servers.\\
-With this cloud service providers were born, offering the bare-metal server rental service with a pay as you go pricing.
+With this cloud service providers were born, offering the bare-metal server rental service with a pay-as-you-go pricing.
 The more resources you use (or rent), the more you pay.
 This mechanism led to the birth of the cloud.\\
 Such an approach zeroes the initial costs to both buy, setup, and maintain a personal infrastructure.
@@ -99,7 +99,7 @@ In the push method, the controlling server pushes the configuration to the desti
 From now on, for the aim of this thesis, with IaC tools (or configuration management tools) we'll be referring to set of the following technologies: \gls{GCP}, \gls{Azure}, \gls{CloudFormation}, \gls{Terraform}, \gls{CDK}, and Pulumi.\\
 The various existing IaC tools have a different architectures and functioning, but at their base they share the same abstract structure:
 \begin{description}
-  \item[declarative APIs for the user] these APIs let the user declare the resources that he would like to instantiate on a certain cloud service provider
+  \item[declarative APIs for the user] these APIs let the user declare the resources that would like to instantiate on a certain cloud service provider
   \item[backend engine] this engine will look at the resources declared by the user through the user APIs and will convert such declarations to REST API calls to the cloud service provider to instantiate them 
 \end{description}
 Obviously each tool has its own much more deep functioning.
@@ -191,18 +191,18 @@ Let's first introduce the scenario present when Pulumi showed up.
 \subsection{Pulumi and the other solutions}
 
 \subsubsection{The two main aspects of IaC tools: supported languages and cloud providers}
-A IaC tool can have its own scripting language to define the resources, or, it can let the user choose from many general purpose programming languages.\\
+An IaC tool can have its own scripting language to define the resources, or, it can let the user choose from many general purpose programming languages.\\
 The scripting languages, as we already mentioned, are a distinctive feature of all the first generation IaC tools.
 These tools comprehend for example Terraform and CloudFormation.\\
 New tools then showed up, allowing the user to pick from a pool of general purpose programming languages when interacting with such a technology.
 For these case we'll mention AWS CDK and Pulumi.\\
-
+\newline
 Another distinctive trait among the various technologies is the range of supported cloud providers.\\
 The cloud providers developed their own IaC tool to manage the cloud resources they were offering.\\
 Then, some innovative IaC tools have been able to manage resources on different cloud providers.
 This is clearly a convenient functionality since it lets the user have a single tool to manage all the cloud resources coming from various different providers.
 Both Pulumi and CDK let the user choose from many commonly used programming languages.\\
-
+\newline
 For how we have seen in the \hyperref[sec:story-iac]{How we arrived to the IaC} section, the increasing complexity of the infrastructure with the advent of the cloud and the serverless requires more and more robust tools and programming languages to exploit at the best the refactoring, reuse, and the logical organization of the code in well defined structures or packets.\\
 Moreover, the competition that is involving all the various providers is bringing the companies to choose multi-cloud solutions. Because of this, IaC tools that support multiple clouds are preferable to the ones supporting a single cloud service provider.\\
 Let's now see how Pulumi and the other various available tools are satisfying these two main aspects.
@@ -213,7 +213,7 @@ It's one of the founders of IaC but being based on JSON/YAML files for defining 
 
 \subsubsection{Terraform: scripting languages and multiple cloud providers supported}
 Terraform proposed as a solution to manage multiple resources coming from different cloud providers with just one tool.
-The struggle for companies to adopt many different IaC tools, one for each cloud provider, was not negligible.
+The effort made from companies to adopt many different IaC tools, one for each cloud provider, was not negligible.
 Such a solution allows to cut costs and efforts to manage the cloud resources of the various infrastructures.\\
 Anyway Terraform is based on the HTC scripting language, limiting its expressiveness in the possible IaC solutions.
 
@@ -227,7 +227,7 @@ All the features of the selected programming language can boost the offered solu
 Pulumi doesn't want to give up on anything.
 It succeeded in offering a solution that is flexible under both of the two aspects.
 Pulumi managed to achieve what the other IaC tools and platforms did not, and because of this is bringing on the table some innovation and added value with respect to the competitors.\\
-Pulumi successfully abstracted from the problem in order to find a smart solution to achieve both the multi programming language support and the multi-cloud service provider support.
+Pulumi successfully abstracted from the problem in order to find a smart solution to achieve both the multi-programming language support and the multi-cloud service provider support.
 It decoupled the REST APIs offered from the various cloud service providers (to create the resources) from the user APIs of Pulumi (that are used from the user to inform Pulumi about what resources should be created on the various CSPs).
 Pulumi's backend engine converts the code written from the user to effective REST API calls to the various cloud service providers, and eventually create the resources.\\
 This workflow is the major innovation brought by Pulumi, and for sure the key that allowed it to don't give up neither on the flexibility of the supported programming languages and nor on the supported cloud providers.
@@ -250,9 +250,9 @@ TypeScript instead is having much less.\\
 Furthermore, Java has a much better management of the code with respect to TypeScript.
 The Java packages are useful when the solution grows in size, while TypeScript's one will eventually start to "creak" due to its poor code management features.
 An IaC architecture will keep growing in size as time passes, so the possibility to use a programming language that offers good tools to manage the codebase, such as Java, is a valuable feature to keep in mind when choosing the programming language.\\
-Last but not least, with Java addition to Pulumi, all the languages based on the JVM can actually work with Pulumi.
+Last but not least, with the addition of Java to Pulumi, all the languages based on the JVM can actually work with Pulumi.
 In fact the great effort made from Pulumi is actually opening the doors to many more languages such as: Scala, Kotlin, Groovy, Clojure, etc.
-In fact, my Scala solution has been made possible exactly because of this fact, since I defined my Scala APIs for Pulumi on top of the Java APIs.
+In fact, my Scala solution has been made possible exactly because of this fact, since I defined my Scala APIs for Pulumi on top of the official Java APIs.
 
 
 \subsubsection{The onerous work to officially support a new language in Pulumi}
