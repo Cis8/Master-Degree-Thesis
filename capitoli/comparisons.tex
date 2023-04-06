@@ -7,7 +7,7 @@
 \label{cap:comparisons}
 %**************************************************************
 
-\intro{Here all the advantages and disadvantages detected while using Typecript and Scala for our case study will be presented}\\
+\intro{Here all the observations detected while using Typecript and Scala for our case study will be presented}\\
 
 %**************************************************************
 \section{Code readability in TypeScript vs in Scala}
@@ -16,8 +16,7 @@
 TypeScript's programs have a really readable code.
 In the implementation we can appreciate how the passing of the builders methods' parameters have been achieved in a concise way using the JSON format.
 This is fitting very well in a declarative approach, granting compact code solutions. 
-On the other hand, some lacks of the language caused the code to lose part of the readability and conciseness.\\
-
+On the other hand, some shortcomings of the language caused the code to lose part of the readability and conciseness.\\
 \subsubsection{Less readable code with pulumi.all and .apply}
 \label{sssec:ts-subnets-comparison}
 Lets consider once again the TypeScript version of the function that is responsible for creating the subnets across the various availability zones:\\
@@ -74,8 +73,8 @@ This code is really readable (it resembles to a function definition) and is perf
 
 \subsubsection{Hidden builders}
 Thanks to the \texttt{given} and \texttt{using} keywords, builders aren't manually instantiated and we don't require to explicitly say on which builder instance we are calling the builders' methods.
-This is letting us have an even more lightweight code that is really just focusing on what we need to instantiate instead of the how we could instantiate it.
-Let's consider the VPC creation in our Scala solution and how would it is it created instead in a Java solution.\\
+This is letting us have an even more lightweight code that is really just focusing on \textit{what} we need to instantiate instead of \textit{how} we could instantiate it.
+Let's consider the VPC creation in our Scala solution and how would it be created instead in a Java solution.\\
 Scala solution:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -101,8 +100,8 @@ Java solution:\\
 Even if our \textit{syntactic sugar} is using the very same APIs used from the Java's solution, the readability and the conciseness are entirely on another level.
 
 \subsubsection{Implicit conversion functions to get rid of Map and List constructors while passing a single value}
-The implicit conversion functions presented in the \hyperref[sssec:implicit-converion-functions]{Implicit conversion functions} paragraph let us get rid of the constructor of the Map and of the List if we're interested in passing a single value.\\
-It is common, while declaring a new resource, to pass a single parameter to a builder's method that is actually expecting a list or a map of parameters.
+The implicit conversion functions presented in the \hyperref[sssec:implicit-converion-functions]{Implicit conversion functions} paragraph let us get rid of the constructor of the \texttt{Map} and of the \texttt{List} if we're interested in passing a single value.\\
+It is common, while declaring a new resource, to pass a single parameter to a builder's method that is, in truth, expecting a \texttt{List} or a \texttt{Map} parameter.
 In such cases syntax at line 3 of the following block of code could be annoying:\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -134,9 +133,9 @@ But thanks to the implicit conversion functions the final result, as we have see
 %  \includegraphics[width=0.7\columnwidth]{comparisons/implicit_map} 
 %  \captionof{figure}{Tuple for a parameter}
 %\end{center}\mbox{}\\
-For a single parameter the difference of effort in explicitly writing the map constructor can be negligible, but when it comes to define many resources that use multiple methods that accept collections as input parameters, such a feature can really save us a lot of keystrokes, while keeping our code more readable and simple.
+For a single parameter the difference of effort in explicitly writing the \texttt{Map} constructor can be negligible, but when it comes to define many resources that use multiple methods that accept collections as input parameters, such a feature can really save us a lot of keystrokes, while keeping our code more readable and simple.
 
-\subsubsection{Readability of the Scala's for yield vs pulumi.all and .apply}
+\subsubsection{Readability of the Scala's for yield vs pulumi.all and apply}
 \label{sssec:readability-for-yield}
 Lets consider the function that creates the subnets.
 With respect to the TypeScript solution, the Scala one is more readable:\\
@@ -165,18 +164,18 @@ With respect to the TypeScript solution, the Scala one is more readable:\\
 %  \includegraphics[width=1.0\columnwidth]{comparisons/scala_create_subnets} 
 %  \captionof{figure}{Scala subnets creation}
 %\end{center}\mbox{}\\
-All the logic to unbox the \texttt{Output} values in order to execute some logic on them is neatly hidden behind the transparent monadic implementation of the \texttt{Output} type.
+All the logic to \textit{unbox} the \texttt{Output} values in order to execute some operations on them is neatly hidden behind the transparent monadic implementation of the \texttt{Output} type.
 This enables a more elegant and concise solution based just on well known constructs such as the for loop and the map function.
 This allowed to get rid of the cryptic \texttt{pulumi.all} function and let us successfully hid the \texttt{apply} function in the monadic implementation, without requiring the user to explicitly use it.\\
-TypeScript needed for us to rely on the \texttt{pulumi.all} function in order to craft a single \texttt{Output} value out of two, so that the \texttt{apply} function could be used to get the work done.\\
-Here instead we are separately unboxing the \texttt{Output} values with the combination of the expressiveness of the Scala for yield's enumerators and the "unboxing" operation granted by the \texttt{Output[Monad]}.\\
+TypeScript needed for us to rely on the \texttt{pulumi.all} function in order to craft a single \texttt{Output} value out of two, so that the \texttt{apply} function, that is capable to work on a single \texttt{Output} value, could be used to get the work done.\\
+Here instead we are separately \textit{unboxing} the \texttt{Output} values with the combination of the expressiveness of the Scala for yield's enumerators and the \textit{unboxing} operation granted by the \texttt{Output[Monad]}.\\
 %First, the \texttt{map} function is much more intuitive with respect to the \texttt{pulumi.all} and \texttt{apply} combination in the \hyperref[sssec:ts-subnets-comparison]{TypeScript implementation}.
 %Moreover, the for comprehension used in the Scala version is a more elegant and concise solution.
 %In fact, the map function is doing the work of both the \texttt{pulumi.all} and \texttt{apply} functions, with much less code and in a much more readable way.\\
 %Furthermore, with Scala we're using the language feature of the for comprehension to automatically create a collection of the generated subnets and return them all together.\\
-Furthermore, TypeScript implementation requires us to explicitly insert the generated subnets in a variable as a side effect of the \texttt{foreach}.
-Always in TypeScript, we also have to explicitly return the list at the end of the \texttt{apply}'s lambda.\\
-All this is making the TypeScript solution more cumbersome with respect to the clean Scala solution.
+Furthermore, TypeScript implementation requires us to explicitly insert the generated subnets in a variable as a side effect of the \texttt{foreach}, while Scala is automatically achieving it with the for yield construct.\\
+Always in TypeScript, we also have to explicitly return the list at the end of the \texttt{apply}'s lambda, that would otherwise return an \texttt{Output<void>} value.\\
+All this is making the TypeScript solution for the subnets creation much more cumbersome than the Scala counterpart.
 
 
 \section{Expressiveness in TypeScript vs in Scala}
@@ -191,7 +190,7 @@ The \texttt{pulumi.all} function is effective but its existence is required to c
 
 \subsubsection{Scala's expressiveness let us get rid of pulumi.all}
 The functional nature of the Scala language let us get rid of the \texttt{pulumi.all} function thanks to the monad implementation for the \texttt{Output} type.
-The for yield, exploting the monadic type of \texttt{Output}, is letting us unbox the single \texttt{Output}s separately, in a flexible and intuitive way.\\
+The for yield, exploting the monadic type of \texttt{Output}, is letting us \textit{unbox} the single \texttt{Output}s separately, in a flexible and intuitive way.\\
 Furthermore, the \texttt{apply} function that we had to explicitly invoke in the TypeScript solution, became in Scala the actual implementation of the \texttt{flatMap} function for the \texttt{Output[Monad]}, being totally invisible to the user.
 %The \texttt{map} function that we used in our function for the \hyperref[sssec:subnets-creation]{subnets creation} has been implemented only on the bases of the \texttt{flatMap} function.
 %So, we replaced the \texttt{pulumi.all} function with the \texttt{map} function offered by the \texttt{Monad[Output]}, and the \texttt{apply} function is now hidden behind the \texttt{map} implementation.\\

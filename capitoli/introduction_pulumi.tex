@@ -15,7 +15,7 @@ Pulumi is a cloud engineering platform that enables developers and infrastructur
 Pulumi provides a programming model that allows developers to use familiar languages, such as Python, JavaScript, TypeScript, Go, and (partially) Java to define their IaC and manage it as software.
 In fact, it belongs to the second generation tools of the IaC.\\
 As already mentioned in the \hyperref[cap:introduction-to-iac]{Introduction to Infrastructure as Code} chapter, such an approach, makes it easier to automate the deployment and management of infrastructure and applications, as well as to collaborate across teams and projects.\\
-Pulumi is innovative because, differently from most of all the other second generation IaC tools, has been able to abstract the problem of having many different cloud providers, and also of really different natures (such as Kubernetes vs AWS).
+Pulumi is innovative because, differently from most of all the other second generation IaC tools, has been able to abstract the problem of having many different cloud providers, and also of really different natures (such as Kubernetes vs AWS), while supporting many general purpose languages at the same time.
 Its solution is letting the user rely on a single IaC platform to manage any kind of resource on any cloud provider.
 Potentially, Pulumi could support any technolgy that is showing \gls{REST API}s.
 This feature is making Pulumi an innovative IaC platform that rise IaC on a new level.\\
@@ -24,7 +24,7 @@ It also provides templates, examples, and libraries for common infrastructure pa
 Overall, Pulumi aims to streamline the process of building and managing modern cloud-native applications and infrastructure, while providing a flexible and developer-friendly experience.
 
 \subsection{The great advantages of Pulumi as a second generation IaC tool}
-First of all, as mentioned in the \hyperref[sssec:second-wave]{Serverless Infrastructure as programming language code - the second wave} paragraph, all the functionalities that comes along a programming language are letting us achieve more robust and powerful solutions for our infrastructure, rather than what we could achieve with the expressive power of a markup language (like the ones used with \gls{Terraform}).\\
+First of all, as mentioned in the \hyperref[sssec:second-wave]{Serverless Infrastructure as programming language code - the second wave} paragraph, all the functionalities that comes along a programming language are letting us achieve more robust and powerful solutions for our infrastructure, rather than what we could achieve with the expressive power of a markup language (like the one used with \gls{Terraform}).\\
 %Being the focus of this thesis, we'll discuss more about such advantages in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter.\\
 Furthermore, as aforementioned, Pulumi is a multi-cloud tool. Thanks to this we can rely on a single IaC tool for managing resources across different cloud platforms.\\
 Moreover, Pulumi lets the user choose its favorite programming language, or the one that in its opinion is a best-fit for the need to be addressed.
@@ -72,18 +72,20 @@ This information is used by Pulumi to provision and manage the resources in the 
 Once the \textit{stack} is defined, you write code that implements the resource management logic.
 Pulumi provides libraries for several programming languages, including TypeScript, Python, Go, .NET, and partially Java.
 You use these libraries to create and configure cloud resources.\\
-In Pulumi, you define resources using a the respective resource constructor functions.
+In Pulumi, you define resources using the respective resource constructor functions.
 This function takes in the configuration for the resource as input, and returns a reference to the resource to be created.\\
 %This reference can then be used to manage the resource throughout its lifecycle.\\
 Pulumi code can also contain logic for managing relationships between resources.
 For example, you can specify that one resource depends on another, so that Pulumi knows to create the dependent resource first.
+Anyway, Pulumi's backend already knows the dependencies between the resources to be created, so in any case he will manage to reorder their creation in a proper way.
 
 \subsection{Creating and updating resources with Pulumi commands}
 Once the code is written, you use Pulumi to create the cloud resources specified in the \textit{stack} definition.
-Pulumi uses the provider cloud API to create the resources and corresponding configurations. 
-The resource creation process is declarative, which means that Pulumi automatically figures out the order in which resources should be created based on their dependencies.\\
+Pulumi uses the cloud provider exposed REST APIs to create the resources and their corresponding configurations. 
+%The resource creation process is declarative, which means that Pulumi automatically figures out the order in which resources should be created based on their dependencies.\\
 %Pulumi also supports continuous delivery, meaning that changes to your code are automatically detected and used to update existing resources.
 When a change is detected, Pulumi compares the desired state (based on your code) to the current state (based on the resources in the cloud) and makes any necessary changes to bring the resources into compliance with the desired state.
+As we mentioned before, this feature is achieved through the state file that the backend owns.
 
 \subsection{Viewing resources state}
 Pulumi provides a command to view the state of the resources managed by the application: \texttt{pulumi stack}.
@@ -102,7 +104,7 @@ This restores the resource to its last known good state and brings it back into 
 
 \section{Pulumi's Output}
 In an IaC context, and therefore with Pulumi, the creation of the resources is not immediate.
-Hence, in our code when we call a constructor for given resource, we are not actually creating it in that exact moment, but we are rather requesting Pulumi to instantiate such a resource on the given cloud provider.
+Hence, in our code when we call a constructor for a certain resource, we are not actually creating it in that exact moment, but we are rather requesting Pulumi to instantiate such a resource on the given cloud provider.
 So, the usage of that resource is not available until Pulumi will have completed its creation on the cloud provider.
 How can we perform operations on a resource when we do not know when it will become available?
 Pulumi addresses such a problem with the \texttt{Output} type.\\

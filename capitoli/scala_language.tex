@@ -7,7 +7,7 @@
 \label{cap:scala-language}
 %**************************************************************
 
-\intro{Scala brief overview. First the language paradigms are introduced, and then the functionalities used for the thesis are introduced and explained}\\
+\intro{Scala brief overview. First the language paradigms are introduced, and then the functionalities used for the thesis are presented and explained}\\
 
 %**************************************************************
 \section{Introduction to Scala}
@@ -23,7 +23,7 @@ Classes can be extended by subclassing, and by using a flexible \gls{mixin-based
 Scala is also a functional language in the sense that every function is a value.
 Scala provides a lightweight syntax for defining anonymous functions, it supports higher-order functions, it allows functions to be nested, and it supports currying.
 Scala's case classes and its built-in support for pattern matching provide the functionality of algebraic types, which are used in many functional languages.
-Singleton objects provide a convenient way to group functions that aren't members of a class.
+Moreover, singleton objects provide a convenient way to group functions that aren't members of a class.
 
 \subsection{Scala functionalities related to the work of the thesis}
 For the work of the thesis, Scala 3 has been used.
@@ -32,7 +32,7 @@ For the work of the thesis, Scala 3 has been used.
 Thanks to the functional paradigm of Scala, I used the higher order functions and the currying feature to create a powerful \textit{syntactic sugar} for the declaration of AWS EC2 IaC resources in a 
 concise and elegant way.
 \paragraph{Higher order functions}
-An higher order function is function that either takes one or more functions as arguments or returns a function as return value, or both of them.
+An higher order function is a function that either takes one or more functions as arguments or returns a function as return value, or both of them.
 Such a feature is at the base of the functional programming paradigm since it lets concatenate functions and create more complex and more powerful abstract constructs, such as functors, applicatives, and monads, to eventually work on data in an immutable and safe way.
 We'll see more about functors and monads in the \hyperref[sssec:functors-monads]{Functor and monads} paragraph.
 \paragraph{Currying}
@@ -122,7 +122,7 @@ Now, when we'll have to call such a function, it'll require us to just pass the 
   // the compiler will inject the ordering at the end of following function call
   listPeople(List(Person("Weasley", "Ron", 15), Person("Potter", "Harry", 15)))
 \end{verbatim}\mbox{}\\
-This is a key functionality that, among with other Scala features, will let us achieve the goal of the thesis.
+This is a key functionality that, among with other Scala features, will let us achieve a more concise and readable solution.
 % as we will see in the \hyperref[cap:comparisons]{Comparison between the languages for Pulumi and the advantages of Scala} chapter
 
 
@@ -146,14 +146,14 @@ Here is a simple example of the traits usage:
 \end{verbatim}\mbox{}\\
 The \texttt{Lion} class is extending the abstract class \texttt{Animal} and also the \texttt{Mighty} trait.
 This is providing the lion the extra \texttt{roar()} function.\\
-In Scala is possible to extend from 0 or 1 abstract classes and as many traits we desire.
+In Scala is possible to extend from 0 or 1 abstract classes and as many traits as we desire.
 
 
 \subsubsection{Functors and monads}
 \label{sssec:functors-monads}
 \paragraph{Functors}
 A Functor for a type provides the ability for its values to be "mapped over", i.e., apply a function that transforms the value contained in a given \textit{context} while remembering its shape.
-We can represent all types that can be "mapped over" with \texttt{F}.
+We can represent all types that can be "mapped over" with \texttt{F}.\\
 \texttt{F} it's a type constructor: the type of its values becomes concrete when provided a type argument.
 Therefore we write it \texttt{F[\_]}, hinting that the type F takes another type as argument.
 The definition of a generic \texttt{Functor} would thus be written as:
@@ -169,7 +169,7 @@ The instance \texttt{Functor} to \texttt{List} is:
       def map[B](f: A => B): List[B] =
         xs.map(f)
 \end{verbatim}\mbox{}\\
-Here we can notice, as previously mentioned in the \hyperref[par:given-using]{Given and using keywords} paragraph, the \texttt{given} keyword is letting us create an instance of the Functor class for the \texttt{List} type.\\
+Here we can notice, as previously mentioned in the \hyperref[par:given-using]{Given and using keywords} paragraph, that the \texttt{given} keyword is letting us create an instance of the Functor class for the \texttt{List} type.\\
 Lets consider now the following usage of the \texttt{map} extension method on a list:
 \begin{verbatim}
   val l: List[Int] = List(1, 2, 3)
@@ -224,7 +224,8 @@ Scala offers a lightweight notation for expressing \gls{sequence comprehension}s
 Comprehensions have the form \texttt{for (enumerators) yield e}, where \texttt{enumerators} refers to a semicolon-separated list of enumerators.
 An \texttt{enumerator} is either a generator which introduces new variables, or it is a filter.
 A comprehension evaluates the body \texttt{e} for each binding generated by the \texttt{enumerators} and returns a sequence of these values.\\
-The for yield construct in Scala requires two functions to be defined on the type we are iterating on to work: \texttt{map}, and \texttt{flatMap}.
+The for yield construct in Scala requires up to four functions to be defined on the type we are iterating on to work: \texttt{map}, \texttt{flatMap}, \texttt{foreach}, \texttt{withFilter}.
+For our purpose, we will be satisfied if we define the \texttt{map} and the \texttt{flatMap}.
 In fact, it is not a coincidence that we previously introduced the concept of \texttt{Functor} and \texttt{Monad} and \texttt{map} and \texttt{flatMap} functions.
 To better understand how the for comprehension concept works lets consider a brief example:
 \begin{verbatim}
@@ -239,13 +240,13 @@ To better understand how the for comprehension concept works lets consider a bri
           "bar world", "baz hello", "baz world")
 \end{verbatim}\mbox{}\\
 We can notice how we are iterating on the two lists to generate a List of string as result, made of the combinations of the two lists' elements.\\
-The for yield construct, in combination with the \texttt{Monads}, will be a key feature to improve our Scala \textit{syntactic sugar} for the Pulumi APIs.
+The for yield construct, in combination with the \texttt{Monads}, will be a key feature to improve our Scala solution.
 
 \subsubsection{Union type}
 \label{sssec:union}
 Scala has also the so called "union types".
-Used on types, the \texttt{|} operator creates a so-called union type. The type \texttt{A | B} represents values that are either of the type \texttt{A} or of the type \texttt{B}.\\
-so the function declaration \texttt{def foo(a: Int | String)  : Unit} is a function that takes as input either an \texttt{Int} parameter or a \texttt{String} parameter.
+Used on types, the \texttt{|} operator let us define these kind of types. The type \texttt{A | B} represents values that are either of the type \texttt{A} or of the type \texttt{B}.\\
+So, the function declaration \texttt{def foo(a: Int | String)  : Unit} is a function that takes as input either an \texttt{Int} parameter or a \texttt{String} parameter.
 Now we can write both the following function calls:
 \begin{itemize}
   \item \texttt{foo(5)}
