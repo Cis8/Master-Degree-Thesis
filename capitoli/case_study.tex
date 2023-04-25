@@ -12,7 +12,7 @@
 %**************************************************************
 \section{Amazon Web Services}
 AWS is a wide collection of services with many different purposes and characteristics including computation, storage, databases, analytics, networking, mobile, developer tools, management tools, IoT, security, and enterprise applications.
-All these services and are on-demand, available in seconds, with pay-as-you-go pricing.
+All these services are on-demand, available in seconds, with pay-as-you-go pricing.
 Anyway, for the purpose of the thesis we'll focus only on the EC2 module.
 
 \subsection{AWS's EC2 module}
@@ -26,7 +26,7 @@ For the thesis, only few components of the vast EC2 module have been selected to
 
 \subsection{Components of the infrastructure}
 The infrastructure I created for the case study of the thesis is an AWS EC2 \gls{VPC} hosting 3 private \gls{subnet}s, 3 public subnets, an \gls{internet gateway} to let the public subnets connect to the internet and a \gls{routing table} to map the public subnets to the internet gateway.
-The architecture will look like the following:
+The architecture looks like this:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/vpc_diagram} 
   \captionof{figure}{Infrastrutcture Architecture}
@@ -42,7 +42,7 @@ If an availability zone becomes temporary unavailable, we can rely on the others
 
 \subsubsection{VPC}
 The VPC is our "container" for all the other infrastructure resources.
-We'll define within it the subnets, the internet gateway and the routing table.\\
+We'll define the subnets, the internet gateway, and the routing table within such a VPC.\\
 The most important setting of our AWS EC2 VPC is the CIDR (Classless Inter-Domain Routing) block.
 It represents the range of private IP addresses that the VPC can use to create and manage resources within the VPC.
 \paragraph{CIDR}
@@ -116,9 +116,7 @@ The call to the VPC resource creation API of Pulumi is done in this method of th
   protected createVPC() {
     this.vpc = new Vpc("vpc_res", {
       cidrBlock: "10.136.0.0/24",
-      tags: {
-        Name: "myVPC-typescript",
-      },
+      tags: {Name: "myVPC-typescript"},
     },
     {
       parent: this,
@@ -128,9 +126,9 @@ The call to the VPC resource creation API of Pulumi is done in this method of th
 \end{minipage}
 \texttt{vpc\_res} is the name that will be given by Pulumi at this resource once on the \textit{stack}.
 We can notice how the various parameters are given in a declarative style within the curly brackets.
-Such a syntax is \textit{syntactic sugar} for a Map definition.\\
+Such a syntax is \textit{syntactic sugar} for a \texttt{Map} definition.\\
 At line 9 the parent of this resource is set.
-With this specification, we are telling to the \textit{stack} of Pulumi that the VPC resource \texttt{vpc\_res} that we are creating is a child resource of the VPC resource identified by the \texttt{MyVPC} class, that in practice is nothing but a container for the other resources.
+With this specification, we are telling to the \textit{stack} of Pulumi that the VPC resource \texttt{vpc\_res} that we are creating is a child resource of the resource identified by the \texttt{MyVPC} class, that in practice is nothing but a container for the other resources.
 
 \subsection{Internet gateway creation}
 To create the internet gateway resource we can use the following code:\\
@@ -155,7 +153,7 @@ It is really simple since it requires just the ID of the VPC in which it has to 
 \subsection{Subnets creation}
 To create the private and the public subnets we require a more complex logic.
 The function that has been used is \texttt{protected createAZsSubnets(isPvt: Boolean)}.
-It is called twice, once with a true value to create the private subnets, and another one with false to instantiate the public ones (and connect them to the routing table bound with the internet gateway).\\
+It is called twice, once with a \texttt{true} value to create the private subnets, and another one with \texttt{false} to instantiate the public ones (and connect them to the routing table bound with the internet gateway).\\
 In the body of the function, first we want to get all the availability zones present in the AWS region we are working on.
 To achieve this, we will use such a function \texttt{this.availableZones = aws.getAvailabilityZonesOutput()}.\\
 Second, we want to create both a private and public subnet in each availability zone acquired with the aforementioned method.
@@ -175,7 +173,7 @@ The array of strings is the list of the availability zones names, while the seco
 Now we have a new \texttt{Output} type that is more suitable to create the subnets based on our VPC ID, because the function apply is letting us "open" an \texttt{Output} value and access its content.
 
 \subsubsection{.apply}
-Lets extend our code in this way:\\
+Let's extend our code in this way:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
   pulumi.all([this.availableZones.names, this.vpc!.id]).apply(([azNames, vpcId]) => {
@@ -281,7 +279,7 @@ Here is the code of the function:\\
 \end{lstlisting}
 \end{minipage}
 Here we used once more, as for the subnets creation, a combination of \texttt{apply} and the \texttt{foreach} to iterate over all the subnets "\textit{unboxed}" from the \texttt{Output} \textit{context}.
-Also here, we \textit{unbox} the \texttt{Subnet[]} value from the output with the aid of the \texttt{apply} function, and then we iterate over the subnet array with the \texttt{foreach}.\\
+Also here, we \textit{unbox} the \texttt{Subnet[]} value from the \texttt{Output} with the aid of the \texttt{apply} function, and then we iterate over the subnet array with the \texttt{foreach}.\\
 Inside the \texttt{foreach}'s lambda we are defining a new \texttt{RouteTableAssociation} AWS EC2 resource that requires just the ID of the subnet and the ID of the routing table to which we want to attach the subnet to.
 
 \section{Creating the resources with Pulumi}
@@ -304,7 +302,7 @@ This is helping us in keeping our resources on the \textit{stack} nicely ordered
 Moreover, we can notice how they are neatly nested thanks to the usage of the \texttt{parent} extra option.\\
 
 \section{Destroying the resources with Pulumi}
-Now lets use the \texttt{pulumi destroy} command to destroy the resources on our Pulumi's \textit{stack}.
+Now let's use the \texttt{pulumi destroy} command to destroy the resources on our Pulumi's \textit{stack}.
 The preview of the changes that we are about to get looks like this:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/pulumi_destroy_1} 
@@ -331,13 +329,13 @@ The steps of the work done have been the followings:
   \item create an automatic code generator for our \textit{syntactic sugar} functions, so that we can quickly create a library for Scala's Pulumi APIs
   %\item try to recreate the \textit{stack} with the automatically generated code
 \end{enumerate}
-Obviously, the third step is quite wide, and if fact with my work I had the time to generate only the functions for a part of the Scala's Pulumi APIs for the AWS EC2 module.\\
+Obviously, the third step is quite wide, and if fact with my work I had generated only the functions for a part of the Scala's Pulumi APIs for the AWS EC2 module.\\
 The just defined steps will be now more accurately presented.
 
 \subsection{Structure of the Java APIs for the constructors of the resources in Pulumi}
 To understand the \textit{syntactic sugar} functions that I defined, let's first consider the general structure of the Java APIs for the constructors of the resources.\\
 The constructor of a resource, in general accepts a name and an instance of the corresponding \texttt{Args} class of the resource we are creating.
-Lets consider for example the Vpc resource.
+Let's consider for example the Vpc resource.
 In Java, to instantiate such a resource we'd call:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -359,8 +357,8 @@ So, for our case study we need to consider: the name to be assigned to the creat
 \label{ssec:syn-sug-usage}
 Our \textit{syntactic sugar} is split in 2 categories of functions.
 The first is about the functions that represent the constructors of the resources.
-The second is for the methods available within the builders of the \texttt{Args} classes and for the CustomResourceOptions builder functions.
-The idea to create a resource is to call the \textit{sugared} function that represent the constructor of that resource, and and then call the Builder methods to assign the various parameters to the resource.
+The second is for the methods available within the builders of the \texttt{Args} classes and for the \texttt{CustomResourceOptions} builder's functions.
+The idea to create a resource is to call the \textit{sugared} function that represent the constructor of that resource, and then call the \texttt{Builder}'s methods to assign the various parameters to the resource.
 
 \subsubsection{Vpc creation}
 \label{sssec:vpc-creation-scala}
@@ -377,13 +375,13 @@ This is how a Vpc resource can be created with my \textit{syntactic sugar}:\\
 \end{minipage}
 At line 1, the \texttt{vpc} function is the actual \textit{sugared} function for the VPC resource constructor.
 We can notice that we have a curried function.
-The first parentheses are taking the parameter for the resource name on the Pulumi \textit{stack}, while the second ones are containing two lambdas (defined by the curly brackets).
+The first parentheses are taking the parameter for the resource name on the Pulumi \textit{stack}, while the second ones contain two lambdas (defined by the curly brackets).
 These lambdas are respectively used to call all the builder methods of the \texttt{VcpArgs} class and the \texttt{CustomResourceOptions}'s ones.\\
-We can notice that we didn't explicitly defined an instance of the builders of such classes.
+We can notice that we didn't explicitly define an instance of the builders of such classes.
 We will soon see how we achieved such a \textit{syntactic sugar} trick.\\
 \texttt{cidrBlock} and \texttt{tags} are the generated methods are the generated methods for the builder of the \texttt{VpcArgs} class.\\ 
 \texttt{parent} is instead the generated method for the builder of the \texttt{CustomResourceOptions} class.\\
-Moreover, we can also notice that inside tags, that expects a \texttt{Map[String, String]} type, the explicit call to the \texttt{Map} builder for the instantiation of a \texttt{Map[String, String]} containing a single elements isn't required.
+Moreover, we can also notice that inside tags, that expects a \texttt{Map[String, String]} type, the explicit call to the \texttt{Map} builder for the instantiation of a \texttt{Map[String, String]} containing a single element isn't required.
 This other trick will be explained later as well.
 
 \subsubsection{Internet gateway creation}
@@ -496,7 +494,7 @@ Since the logic is analogous to the \texttt{createAzSubnets} function we won't c
 
 \subsubsection{Resources creation with pulumi up}
 \label{sssec:res-cre-ts}
-Now lets make sure that the \textit{stack} created with \texttt{pulumi up} is the same of the one created with the TypeScript implementation.
+Now let's make sure that the \textit{stack} created with \texttt{pulumi up} is the same of the one created with the TypeScript implementation.
 From this image we can see that they are equivalent to the ones shown in \hyperref[sssec:res-cre-ts]{Resources creation with pulumi up in TypeScript}:
 \begin{center}
   \includegraphics[width=1\columnwidth]{case_study/pulumi_up_scala_result} 
@@ -518,7 +516,7 @@ Consider the \texttt{vpc} function of the \textit{syntactic sugar} defined insid
 	  new Vpc(param, b.build(), bo.build())
 \end{lstlisting}
 \end{minipage}
-Lets analyze the function by steps.
+Let's analyze the function by steps.
 First of all we can see that the function declaration is curried, we have 2 parentheses with different input parameters.\\
 The first parentheses take simply a \texttt{String} parameter, that is used to set the name of the \texttt{Vpc} resource on the Pulumi \textit{stack}.\\
 The second parentheses are taking two lambdas as parameters: a \texttt{VpcArgs.Builder ?=> Unit}  and a \texttt{CustomResourceOptions.Builder ?=> Unit} with default parameter \texttt{baseOpts}. We'll see in a moment what \texttt{baseOpts} is.\\
@@ -558,7 +556,7 @@ The \texttt{baseOpts} function that we mentioned before as a default lambda for 
   def baseOpts(using o: CustomResourceOptions.Builder) : Unit = {}
 \end{lstlisting}
 \end{minipage}
-In practice, is a vacuous lambda that does nothing on the \texttt{CustomResourceOptions} builder.
+In practice, it is a vacuous lambda that does nothing on the \texttt{CustomResourceOptions} builder.
 The question here is: \textit{why do we need such a default function?}
 To answer the question let's consider one more time the code to create a VPC with out \textit{syntactic sugar}:\\
 \begin{minipage}{\linewidth}
@@ -581,7 +579,7 @@ We can do the following:\\
   }
 \end{lstlisting}
 \end{minipage}
-This code compiles, and we can notice that we even got rid of the parentheses around the two groups of curly brackets for the lambdas.
+This code compiles, and we can notice that we even got rid of the parentheses around the curly brackets for the lambda.
 If this compiles is only thanks to the default parameter that is automatically injected in by the compiler, as we didn't give an explicit one.\\
 \newline
 Another question might now arise: \textit{why didn't we change the signature of the function in the following way?}\\
@@ -597,7 +595,7 @@ The first problem leads to a sort of awkwardness while defining the VPC resource
 Moreover, these problems are due to the functioning of the Scala language.
 An implicit parameter must come before all the explicit parameters and when trying to use an explicit parameter in place of an implicit one we must use the \texttt{using} keyword.
 So, the original solution with the default parameter is the best one since it doesn't require us to swap the order of the parameters and we are totally free to choose whether to pass or not the explicit lambda for the \texttt{CustomResourceOptions} builder without worsening our \textit{syntactic sugar}.\\
-Anyway,\textit{what if we modify the just presented alternative like this? Would it be better despite the fact that we would still require the} \texttt{using} \textit{keyword if we want to provide an explicit parameter?}\\
+Anyway, \textit{what if we modify the just presented alternative like this? Would it be better despite the fact that we would still require the} \texttt{using} \textit{keyword if we want to provide an explicit parameter?}\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
     def vpc(param: String)(init: VpcArgs.Builder ?=> Unit)(using initOpt: CustomResourceOptions.Builder ?=> Unit) : etc.
@@ -606,7 +604,7 @@ Anyway,\textit{what if we modify the just presented alternative like this? Would
 Here we can notice that we set moved the implicit \texttt{initOpt} parameter in a new set of parentheses with the currying, granting us the chance to define first the VPC settings, and only then the custom options (i.e. setting the parent).
 Anyway, we have a third problem that is affecting both this and the previous solution.
 The implicit \texttt{initOpt} parameter requires us to provide a visible given instance for the implicit parameter in the site of call of the function.
-In other words, leads to the awkward necessity to crate, or import, a given instance of the \texttt{baseOpts} vacuous lambda in our VPC.scala file to have these solution work. 
+In other words, leads to the awkward necessity to create, or import, a given instance of the \texttt{baseOpts} vacuous lambda in our VPC.scala file to have this solution work. 
 Otherwise, the compiler would complain that there is no a given instance for the implicit parameter in scope.\\
 With this extra constraint, the first proposed solution is, in my opinion, the one that is performing the best.
 %Anyway this solution is failing awfully in such a scenario:\\ %since when we call the \texttt{vpc} function in our VPC class, to declare a VPC resource, and we pass only the parameters for the first two set of parentheses, relying on the fact that the 
@@ -630,7 +628,7 @@ With this extra constraint, the first proposed solution is, in my opinion, the o
 \subsection{\textit{syntactic sugar} for the builders' methods}
 \label{ssec:syn-sug-builders}
 What we have shown up to now is not enough to have our \textit{syntactic sugar} working, we are missing a subtle point to get the work done.
-Lets pay attention to how the \texttt{VpcArgs.Builder} parameters are set inside the vpc function call.
+Let's pay attention to how the \texttt{VpcArgs.Builder} parameters are set inside the vpc function call.
 To be precise we are referring to the methods at line 2 and 3 of this code:\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -657,7 +655,7 @@ This is the signature for the \texttt{cidrBlock} method in the \textit{syntactic
   def cidrBlock(param: String | Output[String]) (using b: cidrBlockOwners): Unit
 \end{lstlisting}
 \end{minipage}
-We can notice that we have once more a curried function.
+We can notice that we have once again a curried function.
 Anyway, from how we have seen before, the \texttt{cidrBlock}, and this holds for all the other builder methods, is called with just a single set of parentheses.
 This is due to the fact that the second parentheses here are taking an implicit parameter, properly marked with the \texttt{using} keyword.\\
 The \texttt{param} parameter is, as we have seen in the \hyperref[sssec:union]{Union type} paragraph, a union type.
@@ -673,9 +671,9 @@ This is a user defined type that I defined to match the builders of all the \tex
 In fact in the Java APIs of Pulumi we have many different \texttt{Args} classes' builders that want to assign the same parameter (aka. \texttt{cidrBlock}) to their own builder.\\
 I remind that in the AWS EC2 module there are much more builders of the \texttt{Args} classes that define a \texttt{cidrBlock} method, but my \textit{syntactic sugar} has created the methods for only the classes that I used in the case study.
 This choice has been made also for simplicity in presenting the work done, otherwise the \texttt{cidrBlockOwners} type would have been featuring many tens of types.
-The fact I used an union type to define this function has two main motivations.
+The fact I used a union type to define this function has two main motivations.
 The first is a Scala language constraint that I came across.
-Lets say that we wanted to define a function to assign the CIDR block working exclusively for \texttt{VpcArgs.Builder} class.
+Let's say that we wanted to define a function to assign the CIDR block working exclusively for \texttt{VpcArgs.Builder} class.
 A definition of such a function would look like:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1, linewidth=420pt]
@@ -685,7 +683,7 @@ A definition of such a function would look like:\\
         case x: Output[String] => builder.cidrBlock(x)
 \end{lstlisting}
 \end{minipage}
-And now lets define another function that is working for the \texttt{RouteTableRouteArgs.Builder}:\\
+And now let's define another function that is working for the \texttt{RouteTableRouteArgs.Builder}:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1, linewidth=420pt]
   def cidrBlock(param: String | Output[String]) (using b: RouteTableRouteArgs.Builder): Unit =
@@ -694,7 +692,7 @@ And now lets define another function that is working for the \texttt{RouteTableR
         case x: Output[String] => builder.cidrBlock(x)
 \end{lstlisting}
 \end{minipage}
-First, we can notice that they are actually the same, except for the signature , but such a solution is not going to compile if we try to call the method \texttt{cidrBlock("10.136.0.0/24")} here:\\
+First, we can notice that they are actually the same, except for the signature, but such a solution is not going to compile if we try to call the method \texttt{cidrBlock("10.136.0.0/24")} here:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1, linewidth=420pt]
   val myVpc: Vpc = vpc("scala-main") ({
@@ -733,10 +731,10 @@ The body of the function is quite simple in its functioning.
 It uses the pattern matching to match the correct builder type and then uses pattern matching once more to match the \texttt{param} parameter to a \texttt{String} or an \texttt{Ouput[String]}.
 Finally it calls the Java API of Pulumi to set the \texttt{cidrBlock} parameter on the builder instance \texttt{b}.\\
 The fact we have duplicated code here is inevitable.
-This is the only solution since if we try to split the duplicated code into an helper function, we would fall again in the 'ambiguous call' compiler error presented above.
+This is the only solution since if we try to split the duplicated code into a helper function, we would fall again in the 'ambiguous call' compiler error presented above.
 But since this is automatically generated code, it is not a real problem to have some duplicated code.\\
 \newline
-To have the final picture of all the functioning lets consider this image:
+To have the final picture of all the functioning let's consider this image:
 \begin{center}
   \hspace*{-3cm}\includegraphics[width=1.4\columnwidth]{case_study/syn-sug-flow} 
   \captionof{figure}{Function calls flow and parameters passing for the VPC declaration}
@@ -750,7 +748,7 @@ while the \texttt{VpcArgs} builder is implicitly injected from the compiler sinc
 \subsubsection{Implicit conversion functions}
 \label{sssec:implicit-converion-functions}
 On top of this, to boost our \textit{syntactic sugar} I defined also two extra functions: \texttt{tupleToMap} and \texttt{elemToList}.
-The purpose of this functions is to achieve the tricks that I mentioned previously (in the \hyperref[sssec:vpc-creation-scala]{Vpc creation in Scala} and in the the \hyperref[sssec:routetable-creation-scala]{Routetable creation in Scala}) about not needing to explicitly instantiate a singleton \texttt{Map} and a singleton \texttt{List} while passing a single argument to the \texttt{tags} or the \texttt{routes} methods.
+The purpose of these functions is to achieve the tricks that I mentioned previously (in the \hyperref[sssec:vpc-creation-scala]{Vpc creation in Scala} and in the \hyperref[sssec:routetable-creation-scala]{Routetable creation in Scala}) about not needing to explicitly instantiate a singleton \texttt{Map} and a singleton \texttt{List} while passing a single argument to the \texttt{tags} or the \texttt{routes} methods.
 The \texttt{tupleToMap} function is implemented like this:\\
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1, linewidth=420pt]
@@ -773,7 +771,7 @@ This will prevent too generic undesired conversions that could create problems i
 
 \subsection{Functor and Monad implementation for the Output type}
 After having introduced the concept of functor and monad in the \hyperref[sssec:functors-monads]{Functors and monads} section, it is here shown how the implementation of the monad for the \texttt{Ouput} type has been achieved.\\
-Since a monad is also a functor, lets see how \texttt{Functor[Output]} has been implemented.
+Since a monad is also a functor, let's see how \texttt{Functor[Output]} has been implemented.
 
 \subsubsection{Functor implementation}
 First a \texttt{Functor} trait has been defined:\\
@@ -843,16 +841,16 @@ As we have seen above, \texttt{applyValue} is matching with the type of \texttt{
   <U> Output<U> apply(Function<T, Output<U>> func)
 \end{verbatim}
 Since the function passed to \texttt{apply} takes a type \texttt{T} as input and returns a type \texttt{Output<U>} as result, and the whole \texttt{apply} returns an \texttt{Output<U>}, we have a perfect type match with the \texttt{flatMap} signature.
-In fact it will suffices us to use \texttt{apply.(f.asSJava)} to get the work done.\\
+In fact it will suffice us to use \texttt{apply.(f.asSJava)} to get the work done.\\
 Thanks to this implementation we are able, as we have seen in the \hyperref[sssec:subnets-creation]{Subnets creation in Scala} paragraph, 
 to use \texttt{map} inside the for yield construct to \textit{unbox} the inner values of the \texttt{Output} types and achieve the desired results.
 %In fact, \texttt{availabilityZonesNames()} is Output[GetAvailabilityZonesResult], and being now Output a monad, the map function is supported.
-With all this, we succeeded in both getting rid of the \texttt{.pulumiall} method while haing an even more readable and expressive syntax.
+With all this, we succeeded in both getting rid of the \texttt{.pulumiall} method while having an even more readable and expressive syntax.
 
 \subsection{Automatic code generation for the \textit{syntactic sugar}}
 The generation of the \textit{syntactic sugar} code required the following 2 passages:
 \begin{itemize}
-  \item Analyze the source code of Pulumi's Java APIs for AWS EC2 in order to infer some information about the their structure. To be precise, we want to understand which resources constructors and which builders' methods are present% in the Builder of each \texttt{Args} class
+  \item Analyze the source code of Pulumi's Java APIs for AWS EC2 in order to infer some information about their structure. To be precise, we want to understand which resources constructors and which builders' methods are present% in the Builder of each \texttt{Args} class
   \item Use the extracted information to automatically generate the \textit{sugared} code for the PulumiUtilFunctionsForScala.scala and PulumiBuilderUtilFunctionsForScala.scala files
 \end{itemize}
 The first step has been quite straight forward with the aid of the JavaParser library.
@@ -863,7 +861,7 @@ I'll introduce now the failed approaches for the second step and, in the next se
 As a first attempt for the automatic generation of the \textit{syntactic sugar}, I tried to use the metaprogramming features offered from the new Scala 3 \textit{macro}s to represent the autogenerated code in the form of an \gls{abstract syntax tree} (AST).
 This solution was potentially promising, since Scala also offers the opportunity to convert these ASTs in code and vice versa at compile time, and so telling us about any error at compile time.
 The problem encountered was that once we defined the \textit{macro} for a new type (like the \texttt{cidrBlockOwners} union type), such a type wasn't available at compile time for the other code.
-In other words, the types generated through the \textit{macro}, can't be referenced in the same project since the whole compilation must be finished before having the chance to use the brand new types.\\
+In other words, the types generated through the \textit{macro}, can't be referenced in the same project since the whole compilation must be finished before having the chance to use the brand-new types.\\
 I'll report here the work done, that is the attempt to define a custom type to be later used in the same project.
 In particular, the type definition was trying to address the generation of the custom types, like \texttt{cidrBlockOwners}. 
 These types were to be used later, in the same project, with other \textit{macro}s that would have represented the builders' methods and the constructors for the resources.
@@ -878,7 +876,7 @@ The code representation created in the \textit{macro} is converted back and embe
 Scala 3 \textit{macro}s manage the code as an AST. To be precise the Scala 3 implementation of the AST is used, that is called Typed Abstract Syntax Tree (TASTy).\\
 A \textit{macro} in general is defined by two functions.
 One is used to call the \textit{macro} in the code and the other is used define its implementation.\\
-Now lets consider a \textit{macro} to define a new type with a custom name that represents the \texttt{String | Boolean} union type.
+Now let's consider a \textit{macro} to define a new type with a custom name that represents the \texttt{String | Boolean} union type.
 The function that implements the \textit{macro} is the following one:\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -891,7 +889,7 @@ The \textit{quoting}, identified by the \texttt{'\{...\}} syntax, is encapsulati
 We can also note the \texttt{\$name} syntax within the curly brackets.
 In fact, since the \texttt{name} parameter is of type \texttt{Expr}, and hence is represented as a TASTy, we have to convert it to code in order to use it inside the curly brackets along with the rest of the code.
 To achieve this we used the splicing: \texttt{\$}.\\
-Now lets consider instead the function that we'll use to call the \textit{macro}:\\
+Now let's consider instead the function that we'll use to call the \textit{macro}:\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
     inline def defineNewType(inline name: String, inline types: String*): Any = 
@@ -903,7 +901,7 @@ The \textit{inlining}, in Scala, is the replacement of the code in the place of 
 So when we'll call this function, its body will be replaced by the compiler at the site of the function call.
 Since the body of this function is the \textit{splicing} of the call to the \textit{macro} implementation, the code that will is going to be replaced will be, in truth, the one returned by the definition of the \textit{macro}.\\
 We evince that the key to work with \textit{macro}s is the combo between the \textit{inlining} and the \textit{quoting}/\textit{splicing}.
-As a final result we'll have the compilation of the the code defined within the body of the \textit{macro} implementation in the place of the \textit{macro} call.\\
+As a final result we'll have the compilation of the code defined within the body of the \textit{macro} implementation in the place of the \textit{macro} call.\\
 %The final result will be the compilation of a code that has the body of the definition of the \textit{macro} in place of the function call.\\
 \newline
 What I wanted to achieve with all this was the possibility to define a new type through a \textit{macro} and reference that type somewhere else in the project.
@@ -915,7 +913,7 @@ So I created this object for the definition of a new type:\\
     }
   \end{lstlisting}
 \end{minipage}
-With this code we are actually asking the compiler to replace the code of the \texttt{defineNewTypeImpl} \textit{macro} function, with \texttt{"MyType"} as input parameter, in place of the function call at line 2 of the block of code just presented.\\
+With this code we are actually asking the compiler to replace the code of the \texttt{defineNewTypeImpl} \textit{macro} function, with \texttt{"MyType"} as input parameter in place of the function call at line 2 of the block of code just presented.\\
 The next step was to reference the newly created type somewhere else in the code, in this way:\\
 \begin{minipage}{\linewidth}
   \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
@@ -930,14 +928,14 @@ This problem caused the whole \textit{macro} approach to fail.
 
 
 \subsubsection{Scalameta}
-Another option was represented by Scalameta, a library to read, analyze, transform and generate Scala programs.
+Another option was represented by Scalameta: a library to read, analyze, transform and generate Scala programs.
 Sadly, it isn't compatible with Scala 3, and so I had no chance to use it.
-If the support for Scala 3 will be added to Scalameta, it should be considered as a better approach for the generation of the \textit{syntactic sugar} code in the future.
+If the support for Scala 3 will be added to Scalameta, it should be considered a better approach for the generation of the \textit{syntactic sugar} code in the future.
 
-\subsubsection{A naive approach as solution}
-In the end, for the second step, a standard \textit{naive} approach has been adopted.
+\subsubsection{A naïve approach as solution}
+In the end, for the second step, a standard \textit{naïve} approach has been adopted.
 The auto-generated code is created with a program that inserts the piece of information extracted from the analysis of the Java APIs into a template for the PulumiBuilderUtilFunctionsForScala.scala and the PulumiUtilFunctionsForScala.scala files.
-The generated code can then be exported as a library and included into the dependencies of the building tool used in the Pulumi Scala project.
+The generated code can then be exported as a library and included into the dependencies of the building system used in the Pulumi Scala project.
 
 \subsection{Pulumi Java APIs libraries inspection with JavaParser}
 Since the code of the project for the inspection is quite verbose (JavaParser is a Java library) and not particularly interesting for the final objective of the thesis, I won't report any code here.
@@ -947,7 +945,7 @@ I'll limit to describe the steps that are done to infer the required information
 In the Java APIs of Pulumi we have two kind of files (and so classes).
 The firsts are the \textbf{non} ...\texttt{Args} files, that are those files that contain the API for the constructors of a given resource.
 The second kind of files are represented by the \texttt{Args} files.
-Thes classes contain the Builder definition of the respective class and the APIs of the respective builders' methods.% used to pass the arguments of the resource while building it with an instance of a builder.
+These classes contain the \texttt{Builder} definition of the respective class and the APIs of the respective builder methods. % used to pass the arguments of the resource while building it with an instance of a builder.
 For example, we have the Vpc.java file and the VpcArgs.java files.
 
 \subsubsection{DirExplorer}
@@ -997,7 +995,7 @@ We have two functions, named \texttt{writeContentForBuilders} and \texttt{writeC
 With \textit{various pieces} I refer to the generated types for the methods of the builders, the imports, the conversion functions, etc.\\
 Finally we have a bunch of functions that fill the various templates to generate the \textit{various pieces} of code.
 These functions are: \texttt{generateTypes}, \texttt{generateBuilderMethods}, \texttt{generateConstructors}, and \texttt{generateImplicitConversionFunctions}.
-To have an idea of how the filling of a template works lets consider the \texttt{generateConstructors} function:\\
+To have an idea of how the filling of a template works let's consider the \texttt{generateConstructors} function:\\
 %\begin{minipage}{\linewidth}
 %  \begin{lstlisting}[numbers=left, numberstyle=\tiny, numbersep=-5pt, stepnumber=1]
 %  def generateConstructors(extractedConstructors: Array[String]) : Array[String] =

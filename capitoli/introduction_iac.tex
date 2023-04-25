@@ -24,7 +24,7 @@ Some templates have been created to slightly automate the process of reconfigura
 \subsection{The advent of the virtualization}
 The virtualization era began when the virtual machine concept was born.
 In this period companies still had to own bare-metal servers, but the virtualization granted the possibility to scale software services upon one or more hardware servers.
-This was possible to the decoupling between the hardware and the software.
+This was possible thanks to the decoupling between the hardware and the software.
 However, to achieve this goal a further amount of configuration was required to be given and maintained.
 The virtualization layer is having its own configuration, on top of the one of the bare-metal server.\\
 
@@ -61,7 +61,7 @@ All this led to the serverless computing, which has put even more pressure on th
 
 \subsection{The advent of the Infrastructure as Code}
 We notice from the previous paragraphs that, over time, the amount of configuration required has kept increasing over time, reaching its peak with the current serverless cloud scenario.
-The necessity of configuration management tools was becoming real to keep up with the increasing complexity of the cloud structure and functioning.\\
+The necessity of configuration management tools to keep up with the increasing complexity of the cloud structure and functioning was becoming real.\\
 With the advent of such tools, the Infrastructure as Code was born.
 %It can be referred as the engineering of system administration activities
 
@@ -83,8 +83,8 @@ The definitions may be in a version control system. The code in the definition f
 There are generally two approaches to IaC: declarative (functional) vs imperative (procedural). The difference between the declarative and the imperative approach is essentially \textit{what} versus \textit{how}.
 The declarative approach focuses on what the eventual target configuration should be; the imperative focuses on how the infrastructure is to be changed to meet this.
 The declarative approach defines the desired state and the system executes what needs to happen to achieve that desired state.
-Imperative defines specific commands that need to be executed in the appropriate order to end with the desired conclusion.\\
-In the \hyperref[sec:story-iac]{How we arrived to the IaC} section we have seen how first the APIs of the cloud service providers have been exposed, and only after the configuration management tools were born.
+Imperative defines specific commands that need to be executed in the appropriate order to end with the desired result.\\
+In the \hyperref[sec:story-iac]{How we arrived to the IaC} section we have seen how first the APIs of the cloud service providers have been exposed, and only after that the configuration management tools were born.
 The exposed APIs are by nature imperative. In fact their usage is cumbersome and the user must be aware of what he is actually doing, otherwise configuration errors might happen.\\
 The configuration management tools that were born after the advent of the serverless scenario are instead using a declarative approach.
 
@@ -102,7 +102,7 @@ The various existing IaC tools have a different architectures and functioning, b
   \item[declarative APIs for the user] these APIs let the user declare the resources that would like to instantiate on a certain cloud service provider
   \item[backend engine] this engine will look at the resources declared by the user through the user APIs and will convert such declarations to REST API calls to the cloud service provider to instantiate them 
 \end{description}
-Obviously each tool has its own much more deep functioning.
+Obviously each tool has its own much deeper functioning.
 We'll see how Pulumi works in the \hyperref[sec:pulumi-functioning]{Pulumi functioning} section.
 
 %\subsubsection{IaC tool components}
@@ -125,7 +125,7 @@ We'll see how Pulumi works in the \hyperref[sec:pulumi-functioning]{Pulumi funct
 %  \item first, the desired infrastructure resources to be created are declared in a file inside an application managed by a CMP
 %  \item second, the engine of the CMP will execute the application, or inspect the resources declared in the file, and call the cloud service provider APIs to align the state of the cloud resources to the state defined in the user's file.
 %\end{itemize}\mbox{}\\
-%Obviously each tool has its own much more deep functioning.
+%Obviously each tool has its own much deeper functioning.
 %We'll see how Pulumi works in the \hyperref[sec:pulumi-functioning]{Pulumi functioning} section.
 
 
@@ -200,7 +200,7 @@ For these case we'll mention AWS CDK and Pulumi.\\
 Another distinctive trait among the various technologies is the range of supported cloud providers.\\
 The cloud providers developed their own IaC tool to manage the cloud resources they were offering.\\
 Then, some innovative IaC tools have been able to manage resources on different cloud providers.
-This is clearly a convenient functionality since it lets the user have a single tool to manage all the cloud resources coming from various different providers.
+This is clearly a convenient functionality since it let's the user have a single tool to manage all the cloud resources coming from various different providers.
 Both Pulumi and CDK let the user choose from many commonly used programming languages.\\
 \newline
 For how we have seen in the \hyperref[sec:story-iac]{How we arrived to the IaC} section, the increasing complexity of the infrastructure with the advent of the cloud and the serverless requires more and more robust tools and programming languages to exploit at the best the refactoring, reuse, and the logical organization of the code in well defined structures or packets.\\

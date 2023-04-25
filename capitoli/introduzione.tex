@@ -21,10 +21,10 @@ All this led to the need of having configuration files to ensure repeatability a
 The evolution continues with the advent of the containers, container orchestration, and the virtualization of always smaller applications.
 This fragmentation of the virtualized services required a further effort in the management of the configuration for the creation and maintenance of always smaller resources.
 With this the serverless computing begins.\\
-With the serverless model, the need for configuration management tool is made clear.
+With the serverless model, the need for configuration management tools is made clear.
 The configuration management tools based on a declarative approach that started to appear are different from each other and can be more flexible on certain aspects, and less on others.
 Among all the characteristics that we could take into consideration, we shall focus on their possibility to support the management of the resources on multiple cloud providers and if they support markups languages or general purpose languages for the definition of the configuration of the resources.
-Since the competition of the various cloud providers brought the companies to adopt multi-cloud solutions, picking some services from a certain CSP and others from different CSPs, a tool that allows multi-cloud support is preferred.
+Since the competition of the various cloud providers brought the companies to adopt multi-cloud solutions, picking some services from a certain CSP and others from different CSPs, a tool that allows multi-cloud support is preferable.
 This would ensure to have a single tool for the management of the entire pool of services hosted on the various cloud providers.\\
 At the same time, the increasing complexity of the cloud and the serverless approach are requiring more and more robust and mature languages for the management of the configuration files for the cloud resources.
 Amidst the various configuration management tools, Pulumi is the only one that provides a multi-cloud enabled solution and at the same time supports many general purpose languages, instead of using the less expressive markup languages.\\
@@ -33,7 +33,7 @@ Amidst the various configuration management tools, Pulumi is the only one that p
 Every programming language has its own features and characteristics, that are making it a better choice for some use cases, and a worse one for some others.
 Moreover, when choosing a programming language we should also consider all the complementary benefits or shortcomings that it is carrying over.
 With this I refer to the quality of its building system, the maturity of the available IDEs, the available libraries, the documentation available, and so on.\\
-The aim of the work was to ensure if Scala could be a valuable addition to the current pool of languages supported by Pulumi, that currently are: JavaScript, TypeScript, Python, Go, .NET and  (since 2022) Java.
+The aim of the work is to ensure if Scala could be a valuable addition to the current pool of languages supported by Pulumi, that currently are: JavaScript, TypeScript, Python, Go, .NET and  (since 2022) Java.
 Scala has been chosen for two main reasons.
 First, it is a mature and robust language, with a powerful building system, adopted worldwide, with many libraries, with the interoperability with the JVM and all its others languages, that can be used with excellent IDEs (such as IntelliJ IDEA and Eclipse).
 Second, but not less important, its functional paradigm and its nature prone to the definition of \gls{internal DSL}s should allow to create an expressive \textit{syntactic sugar} that enables concise and readable solutions for the configuration files for the management of the cloud resources.\\
@@ -42,15 +42,17 @@ First, a TypeScript solution for the case study has been implemented.
 Then, the \textit{syntactic sugar} for the Scala support for Pulumi has been coded, to eventually implement the Scala solution of the case study.\\
 %Further extension of the work was to automate the code generation for the \textit{syntactic sugar}.\\
 The TypeScript solution resulted to be very readable. This was expected since TypeScript has a powerful declarative syntax thanks to its support for the JSON format.
-Surprisingly from the comparison between the two implementations, despite the more verbose nature of the Scala language, the generation of a concise and readable solution also for Scala has been achieved.
+Surprisingly, from the comparison between the two implementations, despite the more verbose nature of the Scala language, the generation of a concise and readable solution also for Scala has been achieved.
 Such readability is much appreciated in the declarative approach of the management tools for the cloud resources.
 %The readability in these declarative scenarios is more important than in other more logic-based applications.
 These configuration files must be kept clear and must be easy to read to ensure to ease any future management of the cloud resources.\\
-Scala, differently from TypeScript, has a powerful build system, allows for an excellent management of the code thanks to the packages, and the development is supported by powerful IDEs.
+Scala, differently from TypeScript, allows for an excellent management of the code thanks to the packages and the development is supported by powerful IDEs.
 So it is representing a cool addition that, with respect to TypeScript, can better exploit the refactoring, reuse, and the logical organization in a maintainable structure of the code for our code-based cloud resources configuration.
 And this is perfectly fitting the high requirements coming from the always more complex serverless based cloud scenario.\\
-As extra work, the automatic generation of the \textit{syntactic sugar} code for a partial Scala support for Pulumi has been achieved.
-
+Moreover, the work also shows how a partial Scala support for Pulumi has been achieved in a smart way.
+In general, a laborious and long procedure is required to officially add the support of a language to Pulumi.
+Instead, I managed to provide a partial support of Scala using the Pulumi APIs of the already supported Java language and the interoperability between the JVM languages.
+Such a support is provided as autogenerated \textit{syntactic sugar} that, thanks to its high expressivity, provides the user the tools to achieve readable and concise solutions.
 
 
 %The complexity of the management of the configuration increased further when the cloud and the serverless models arrived.

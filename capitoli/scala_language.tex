@@ -42,7 +42,7 @@ To give a more detailed example let's consider the following function in Scala:
   def sum(a: Int, b: Int) : Int = 
     a + b
 \end{verbatim}\mbox{}\\
-Such a function, takes two Int parameters as input and returns the sum of them.
+Such a function, takes two \texttt{Int} parameters as input and returns the sum of them.
 Therefore, if we call \texttt{sum(1, 2)} we get \texttt{3} as result.
 Now let's instead consider the following function:
 \begin{verbatim}
@@ -60,7 +60,7 @@ So the currying is letting us define and use partial functions, and this feature
 \subsubsection{Pattern matching}
 Pattern matching is a mechanism for checking a value against a pattern.
 A successful match can also deconstruct a value into its constituent parts.
-It is a more powerful version of the switch statement in Java and it can likewise be used in place of a series of if/else statements.
+It is a more powerful version of the \texttt{switch} statement in Java and it can likewise be used in place of a series of \texttt{if}/\texttt{else} statements.
 Let's now consider the following example, taken from \href{https://docs.scala-lang.org/tour/pattern-matching.html#}{Tour of Scala - Pattern Matching}, to have a better idea of the expressiveness of such a feature:
 \begin{verbatim}
   sealed trait Device
@@ -81,7 +81,7 @@ In fact, we'll see in the \hyperref[cap:case-study]{AWS EC2 resources generation
 Obviously, in such an example, the right-hand side of the various cases must have a valid return type with respect to the return type given in the declaration of the method, that in this case is \texttt{String}.
 
 \subsubsection{Extension methods}
-Extension methods let you add methods to a type after the type is defined, i.e., they let you add new methods to closed classes.
+Extension methods let us add methods to a type after the type is defined, i.e., they let us add new methods to closed classes.
 Let's consider an example from \href{https://docs.scala-lang.org/scala3/book/ca-extension-methods.html}{Scala 3 Book - Extension Methods} about the calculation of the circumference of a circle.\\
 In a file we may have:
 \begin{verbatim}
@@ -104,7 +104,7 @@ We shall notice that such extension methods are letting us extend types without 
 \texttt{given} has different usages, but we are interested into its capability to automatically construct an instance of a certain type and make it available to contexts in which we are expecting an implicit parameter.
 To mark a parameter as implicit we have to use the keyword \texttt{using}.
 Doing so, a \texttt{given} variable with a type matching to the implicit parameter's one, if present in the scope, will be automatically injected in \textbf{at compile time}.\\
-Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-given-using/}{Given and Using Clauses in Scala 3 - Rock the JVM} to better understand such concepts:
+Let's consider an example taken from \href{https://blog.rockthejvm.com/scala-3-given-using/}{Given and Using Clauses in Scala 3 - Rock the JVM} to better understand such concepts:
 \begin{verbatim}
   given personOrdering: Ordering[Person] with {
     override def compare(x: Person, y: Person): Int = 
@@ -112,7 +112,7 @@ Lets consider an example taken from \href{https://blog.rockthejvm.com/scala-3-gi
   }
 \end{verbatim}\mbox{}\\
 Here we are creating an instance of \texttt{Ordering} for the \texttt{Person} type.
-Now lets consider the following function declaration:
+Now let's consider the following function declaration:
 \begin{verbatim}
   def listPeople(persons: Seq[Person])(using ordering: Ordering[Person]) = ...
 \end{verbatim}\mbox{}\\
@@ -170,12 +170,12 @@ The instance \texttt{Functor} to \texttt{List} is:
         xs.map(f)
 \end{verbatim}\mbox{}\\
 Here we can notice, as previously mentioned in the \hyperref[par:given-using]{Given and using keywords} paragraph, that the \texttt{given} keyword is letting us create an instance of the Functor class for the \texttt{List} type.\\
-Lets consider now the following usage of the \texttt{map} extension method on a list:
+Let's consider now the following usage of the \texttt{map} extension method on a list:
 \begin{verbatim}
   val l: List[Int] = List(1, 2, 3)
   l.map(x => x  * 2) // the output is List(2, 4, 6)
 \end{verbatim}\mbox{}\\
-The map method is now directly used on \texttt{l}. It is available as an extension method since \texttt{l}'s type is \texttt{List[Int]} and a given instance for \texttt{Functor[List]}, which defines map, is in scope (thanks to the \texttt{given} keyword).
+The map method is now directly used on \texttt{l}. It is available as an extension method since \texttt{l}'s type is \texttt{List[Int]} and a given instance for \texttt{Functor[List]}, which defines \texttt{map}, is in scope (thanks to the \texttt{given} keyword).
 
 \paragraph{Monads}
 A \texttt{Monad} provides the ability to sequence operations on values of a given type while maintaining the \textit{context} of each operation.
@@ -227,7 +227,7 @@ A comprehension evaluates the body \texttt{e} for each binding generated by the 
 The for yield construct in Scala requires up to four functions to be defined on the type we are iterating on to work: \texttt{map}, \texttt{flatMap}, \texttt{foreach}, \texttt{withFilter}.
 For our purpose, we will be satisfied if we define the \texttt{map} and the \texttt{flatMap}.
 In fact, it is not a coincidence that we previously introduced the concept of \texttt{Functor} and \texttt{Monad} and \texttt{map} and \texttt{flatMap} functions.
-To better understand how the for comprehension concept works lets consider a brief example:
+To better understand how the for comprehension concept works let's consider a brief example:
 \begin{verbatim}
   val xs = List("foo", "bar", "baz")
   val ys = List("hello", "world")

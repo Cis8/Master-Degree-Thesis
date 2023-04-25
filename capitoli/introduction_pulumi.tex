@@ -64,9 +64,9 @@ When creating a new Pulumi application, the first step is to define a \textit{st
 A \textit{stack} represents a set of cloud resources that can be managed as a cohesive unit.\\
 Each \textit{stack} is associated with an environment.
 Tipically, we have a stack for the develop, one for the stage and one for the production.
-This is granting us the chance test safely our infrastructure before pushing the changes on production.\\
+This is granting us the chance to safely test our infrastructure before pushing the changes on production.\\
 The \textit{stack} definition typically includes information such as the provider, the region in which the resources should be created, and any required configuration settings.
-This information is used by Pulumi to provision and manage the resources in the \textit{stack}.
+This information is used by Pulumi to provision and manage the resources on the \textit{stack}.
 
 \subsection{APIs to define the resources to be created}
 Once the \textit{stack} is defined, you write code that implements the resource management logic.
@@ -81,10 +81,10 @@ Anyway, Pulumi's backend already knows the dependencies between the resources to
 
 \subsection{Creating and updating resources with Pulumi commands}
 Once the code is written, you use Pulumi to create the cloud resources specified in the \textit{stack} definition.
-Pulumi uses the cloud provider exposed REST APIs to create the resources and their corresponding configurations. 
+Pulumi uses the exposed cloud provider REST APIs to create the resources and their corresponding configurations. 
 %The resource creation process is declarative, which means that Pulumi automatically figures out the order in which resources should be created based on their dependencies.\\
 %Pulumi also supports continuous delivery, meaning that changes to your code are automatically detected and used to update existing resources.
-When a change is detected, Pulumi compares the desired state (based on your code) to the current state (based on the resources in the cloud) and makes any necessary changes to bring the resources into compliance with the desired state.
+When a change is detected, Pulumi compares the desired state (based on your code) to the current state (based on the resources on the cloud) and makes any necessary change to bring the resources into compliance with the desired state.
 As we mentioned before, this feature is achieved through the state file that the backend owns.
 
 \subsection{Viewing resources state}
@@ -99,7 +99,7 @@ The state file is automatically updated by Pulumi as resources are created, upda
 In case of issues or errors during resource creation or management, you can use Pulumi to restore the resource state to the last known good state.
 This ensures that cloud resources are always consistent with the code and \textit{stack} definition.\\
 Pulumi uses the state file to track the current state of the resources it manages.
-If the state of a resource becomes inconsistent with the desired state (for example, if a resource is accidentally deleted), you can use Pulumi to recreate the resource based on the information in the state file.
+If the state of a resource becomes inconsistent with the desired state (for example, if a resource is accidentally deleted) you can use Pulumi to recreate the resource based on the information in the state file.
 This restores the resource to its last known good state and brings it back into compliance with the \textit{stack} definition.
 
 \section{Pulumi's Output}
@@ -109,6 +109,6 @@ So, the usage of that resource is not available until Pulumi will have completed
 How can we perform operations on a resource when we do not know when it will become available?
 Pulumi addresses such a problem with the \texttt{Output} type.\\
 In Pulumi, \texttt{Output} values are typically computed asynchronously, so that they can represent resources that are being provisioned by cloud providers.
-Like a Future in Java, or a Promise in TypeScript, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
+Like a \texttt{Future} in Java, or a \texttt{Promise} in TypeScript, an \texttt{Output} can be used to chain operations that depend on the completion of other operations.
 This feature will come handy to chain the definition of resources that depends on other resources.\\
 We'll see how to create a Monad out of the \texttt{Output} type so that we'll be able to boost our \textit{syntactic sugar} in the Scala version of the case study.
